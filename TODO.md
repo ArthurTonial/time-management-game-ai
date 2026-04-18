@@ -17,9 +17,9 @@ Ordered list of work items. Check off as you go. Each section is a phase — com
 
 Right now MCTS runs for a fixed number of iterations (10,000). For the thesis, it must run until a **time budget expires**.
 
-- [ ] Rewrite `src/agents/mcts/mcts.py`: replace iteration loop with a `while time.time() < deadline` loop
-- [ ] Update `src/agents/mcts/agent.py`: accept a `time_limit` parameter instead of `iterations`
-- [ ] Verify: running for 1s vs 5s produces noticeably different move quality
+- [x] Rewrite `src/agents/mcts/mcts.py`: replace iteration loop with a `while time.time() < deadline` loop
+- [x] Update `src/agents/mcts/agent.py`: accept a `time_limit` parameter instead of `iterations`
+- [x] Verify: running for 1s vs 5s produces noticeably different move quality
 
 ---
 

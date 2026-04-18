@@ -1,22 +1,20 @@
-import random
 import time
-from typing import Tuple, Optional
 from .mcts_node import MCTSNode
 
 
-def mcts_search(root_state, max_iterations: int = 1000) -> tuple:
+def mcts_search(root_state, time_limit: float = 1.0) -> tuple:
     """
-    Main MCTS algorithm
+    Main MCTS algorithm — runs until the time budget expires.
     :param root_state: initial game state
-    :param max_iterations: maximum number of MCTS iterations
+    :param time_limit: seconds to spend searching
     :return: best action (x, y) coordinates
     """
-    
+    deadline = time.time() + time_limit
     root = MCTSNode(root_state, player=None)
 
-    for _ in range(max_iterations):
+    while time.time() < deadline:
         node = root
-        
+
         # Selection: navigate to a leaf node
         while not node.is_terminal() and node.is_fully_expanded():
             node = node.best_child()
@@ -26,7 +24,7 @@ def mcts_search(root_state, max_iterations: int = 1000) -> tuple:
             expanded_node = node.expand()
             if expanded_node is not None:
                 node = expanded_node
-        
+
         # Simulation: rollout from current node
         result = node.rollout()
 
