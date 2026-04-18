@@ -26,6 +26,7 @@ Right now MCTS runs for a fixed number of iterations (10,000). For the thesis, i
 ## Phase 3 — Implement the Time Manager Layer
 
 The Time Manager is a new component that wraps the MCTS agent. It receives:
+
 - Total time budget remaining for the player
 - Move number (game phase)
 - Optionally: board state (for critical move detection)
@@ -43,11 +44,11 @@ src/
     critical.py     # Detect threats (4-in-a-row, forced responses) → more time
 ```
 
-- [ ] Create `src/time_manager/base.py` with abstract interface
-- [ ] Implement `flat.py` (the baseline — must be done first)
-- [ ] Implement `proportional.py`
-- [ ] Implement `phase.py`
-- [ ] Implement `critical.py` (hardest — needs board threat detection)
+- [x] Create `src/time_manager/base.py` with abstract interface
+- [x] Implement `flat.py` (the baseline — must be done first)
+- [x] Implement `proportional.py`
+- [x] Implement `phase.py`
+- [x] Implement `critical.py` (hardest — needs board threat detection)
 
 ---
 
