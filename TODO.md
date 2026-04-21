@@ -33,7 +33,8 @@ The Time Manager is a new component that wraps the MCTS agent. It receives:
 
 And it returns: **seconds to allocate for this move**.
 
-### Directory structure to create:
+### Directory structure to create
+
 ```
 src/
   time_manager/
@@ -54,16 +55,17 @@ src/
 
 ## Phase 4 — Build the Tournament Runner (`run_duel.py`)
 
-`run_duel.py` is referenced in docs but does not exist yet. It needs to:
+It needs to:
+
 - Accept a strategy name (e.g., `--strategy proportional`) and a baseline name
 - Run N matches, alternating colors
 - Collect per-match results (winner, move count, per-move time used)
 - Print a summary table: wins, losses, draws, avg move time
 
-- [ ] Create `run_duel.py` skeleton (calls `server.py` N times)
-- [ ] Add `--strategy` and `--baseline` arguments
-- [ ] Add results aggregation and summary output
-- [ ] Write results to `results/` as JSON or CSV
+- [x] Create `run_duel.py` skeleton (calls `server.py` N times)
+- [x] Add `--strategy` and `--baseline` arguments
+- [x] Add results aggregation and summary output
+- [x] Write results to `results/` as JSON or CSV
 
 ---
 
@@ -72,7 +74,7 @@ src/
 Define a reproducible experiment matrix:
 
 | Strategy | Time Budget | Matches per pairing |
-|----------|-------------|---------------------|
+| -------- | ----------- | ------------------- |
 | flat vs flat | 60s | 30 |
 | proportional vs flat | 60s | 30 |
 | phase vs flat | 60s | 30 |
