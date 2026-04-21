@@ -57,6 +57,48 @@ This project is an undergraduate thesis (TCC) on time management for game-playin
 
 This project applies and benchmarks those ideas on Gomoku.
 
+## Running Experiments
+
+### `run_duel.py` — Tournament Runner
+
+`run_duel.py` runs a series of Gomoku matches between two MCTS agents, each controlled by a different time allocation strategy, and saves the full results to `results/`.
+
+```bash
+python3 run_duel.py --strategy <name> [options]
+```
+
+### Arguments
+
+| Argument | Default | Description |
+| -------- | ------- | ----------- |
+| `--strategy` | *(required)* | Time manager under test: `flat`, `proportional`, `phase`, `critical` |
+| `--baseline` | `flat` | Baseline time manager to compare against |
+| `--matches` | `30` | Number of matches to play |
+| `--time-budget` | `60.0` | Total seconds each player has per game |
+| `--output` | `results/` | Directory where the JSON result file is saved |
+| `--verbose` | off | Print per-move time allocation and thinking time |
+
+### Examples
+
+```bash
+# Reproduce the full thesis experiment matrix
+python3 run_duel.py --strategy proportional --baseline flat --matches 30 --time-budget 60
+python3 run_duel.py --strategy phase        --baseline flat --matches 30 --time-budget 60
+python3 run_duel.py --strategy critical     --baseline flat --matches 30 --time-budget 60
+python3 run_duel.py --strategy flat         --baseline flat --matches 30 --time-budget 60
+
+# Quick smoke test (2 matches, 5 s budget, per-move detail)
+python3 run_duel.py --strategy proportional --baseline flat --matches 2 --time-budget 5 --verbose
+```
+
+### Output
+
+Results are saved as `results/{strategy}_vs_{baseline}_{budget}s.json` and contain:
+
+- **`config`** — run parameters and timestamp
+- **`summary`** — win/loss/draw counts, win rates, average time allocated per move per strategy
+- **`matches`** — full per-match data including every move, time allocated, time spent, and remaining budget
+
 ## Requirements
 
 - Python 3.7+
