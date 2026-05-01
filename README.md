@@ -46,9 +46,10 @@ Strategic time allocation (spending more time on complex/critical moves) will re
 
 ## Research
 
-This project is an undergraduate thesis (TCC) on time management for game-playing AI.
+This project is an undergraduate thesis on time management for game-playing AI.
 
 **Core reference papers** (see `docs/`):
+
 - *A Survey of Monte Carlo Tree Search Methods* — Browne et al.
 - *Monte Carlo Algorithms for Time-Constrained General Game Playing*
 - *Time Management for Monte Carlo Tree Search* (applied to Go)
@@ -75,7 +76,8 @@ python3 run_duel.py --strategy <name> [options]
 | `--baseline` | `flat` | Baseline time manager to compare against |
 | `--matches` | `30` | Number of matches to play |
 | `--time-budget` | `60.0` | Total seconds each player has per game |
-| `--output` | `results/` | Directory where the JSON result file is saved |
+| `--color` | `alternate` | Color the strategy always plays: `B`, `W`, or `alternate` (swap each match) |
+| `--output` | `results` | Directory where the JSON result file is saved |
 | `--verbose` | off | Print per-move time allocation and thinking time |
 
 ### Examples
@@ -87,16 +89,20 @@ python3 run_duel.py --strategy phase        --baseline flat --matches 30 --time-
 python3 run_duel.py --strategy critical     --baseline flat --matches 30 --time-budget 60
 python3 run_duel.py --strategy flat         --baseline flat --matches 30 --time-budget 60
 
+# Pin strategy to a single color (removes first-move bias from color assignment)
+python3 run_duel.py --strategy proportional --baseline flat --matches 30 --time-budget 60 --color B
+python3 run_duel.py --strategy proportional --baseline flat --matches 30 --time-budget 60 --color W
+
 # Quick smoke test (2 matches, 5 s budget, per-move detail)
 python3 run_duel.py --strategy proportional --baseline flat --matches 2 --time-budget 5 --verbose
 ```
 
 ### Output
 
-Results are saved as `results/{strategy}_vs_{baseline}_{budget}s.json` and contain:
+Results are saved as `results/{strategy}_vs_{baseline}_{budget}s_{color}.json` and contain:
 
 - **`config`** — run parameters and timestamp
-- **`summary`** — win/loss/draw counts, win rates, average time allocated per move per strategy
+- **`summary`** — win/loss/draw counts, overall win rates, per-color win rates and match counts for the strategy, average time allocated per move per strategy
 - **`matches`** — full per-match data including every move, time allocated, time spent, and remaining budget
 
 ## Requirements

@@ -39,6 +39,15 @@ STRATEGY_MAP = {
 MIN_MOVE_TIME = 0.05
 
 
+def _safe_avg(lst):
+    return round(sum(lst) / len(lst), 4) if lst else 0.0
+
+
+def _color_win_rate(wins_as, played_as, c):
+    played = played_as[c]
+    return round(wins_as[c] / played, 4) if played > 0 else None
+
+
 # ---------------------------------------------------------------------------
 # Single match
 # ---------------------------------------------------------------------------
@@ -129,25 +138,29 @@ def run_duel(strategy, baseline, n_matches, time_budget, output_dir, color='alte
     baseline_wins = 0
     draws = 0
     match_results = []
+    strategy_played_as = {'B': 0, 'W': 0}
+    strategy_wins_as = {'B': 0, 'W': 0}
 
-    print(f"\nDuel: {strategy} vs {baseline} | {n_matches} matches | {time_budget}s/player\n")
+    color_label = f" | strategy={color}" if color != 'alternate' else ''
+    print(f"\nDuel: {strategy} vs {baseline} | {n_matches} matches | {time_budget}s/player{color_label}\n")
 
     for i in range(n_matches):
-        if color == 'black':
-            strategy_color = 'B'
-        elif color == 'white':
-            strategy_color = 'W'
-        else:  # alternate
+        if color == 'alternate':
             strategy_color = 'B' if i % 2 == 0 else 'W'
+        else:
+            strategy_color = color
         print(f"Match {i + 1}/{n_matches}  (strategy={strategy_color}) ... ", end='', flush=True)
 
         match = run_match(strategy, baseline, strategy_color, time_budget, verbose=verbose)
         match['match_id'] = i
         match_results.append(match)
 
+        strategy_played_as[strategy_color] += 1
+
         ws = match['winner_strategy']
         if ws == strategy:
             strategy_wins += 1
+            strategy_wins_as[strategy_color] += 1
             outcome = f"{strategy} wins"
         elif ws == baseline:
             baseline_wins += 1
@@ -172,9 +185,6 @@ def run_duel(strategy, baseline, n_matches, time_budget, output_dir, color='alte
         if m['strategy'] == baseline
     ]
 
-    def safe_avg(lst):
-        return round(sum(lst) / len(lst), 4) if lst else 0.0
-
     summary = {
         'strategy': strategy,
         'baseline': baseline,
@@ -184,8 +194,14 @@ def run_duel(strategy, baseline, n_matches, time_budget, output_dir, color='alte
         'draws': draws,
         'strategy_win_rate': round(strategy_wins / n_matches, 4),
         'baseline_win_rate': round(baseline_wins / n_matches, 4),
-        'avg_time_allocated_strategy': safe_avg(all_strategy_times),
-        'avg_time_allocated_baseline': safe_avg(all_baseline_times),
+        'strategy_wins_as_B': strategy_wins_as['B'],
+        'strategy_wins_as_W': strategy_wins_as['W'],
+        'strategy_matches_as_B': strategy_played_as['B'],
+        'strategy_matches_as_W': strategy_played_as['W'],
+        'strategy_win_rate_as_B': _color_win_rate(strategy_wins_as, strategy_played_as, 'B'),
+        'strategy_win_rate_as_W': _color_win_rate(strategy_wins_as, strategy_played_as, 'W'),
+        'avg_time_allocated_strategy': _safe_avg(all_strategy_times),
+        'avg_time_allocated_baseline': _safe_avg(all_baseline_times),
     }
 
     _print_summary(summary)
@@ -218,6 +234,12 @@ def _print_summary(s):
     print(f"  {s['strategy']:20s}  wins: {s['strategy_wins']:3d} / {s['total_matches']}  ({s['strategy_win_rate'] * 100:.1f}%)")
     print(f"  {s['baseline']:20s}  wins: {s['baseline_wins']:3d} / {s['total_matches']}  ({s['baseline_win_rate'] * 100:.1f}%)")
     print(f"  {'draws':20s}       {s['draws']:3d} / {s['total_matches']}")
+    for c, label in (('B', 'Black'), ('W', 'White')):
+        n = s[f'strategy_matches_as_{c}']
+        if n > 0:
+            wr = s[f'strategy_win_rate_as_{c}']
+            wins = s[f'strategy_wins_as_{c}']
+            print(f"  {s['strategy']} as {label}: {wins}/{n}  ({wr * 100:.1f}%)")
     print(f"  avg move time  {s['strategy']:>15s}: {s['avg_time_allocated_strategy']:.3f}s")
     print(f"  avg move time  {s['baseline']:>15s}: {s['avg_time_allocated_baseline']:.3f}s")
     print(f"{'=' * width}\n")
@@ -252,7 +274,7 @@ def main():
         help='Directory to save results (default: results/)',
     )
     parser.add_argument(
-        '--color', default='alternate', choices=['alternate', 'black', 'white'],
+        '--color', default='alternate', choices=['alternate', 'B', 'W'],
         help='Which color the strategy always plays: alternate (default), black, or white',
     )
     parser.add_argument(
