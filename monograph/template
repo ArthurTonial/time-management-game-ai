@@ -1,0 +1,314 @@
+%Template para TCC CIC UFRGS
+%Author: Lucas Schnorr (Adaptado para overleaf por Rubens dos Santos)
+
+% exemplo genérico de uso da classe iiufrgs.cls
+% $Id: iiufrgs.tex,v 1.1.1.1 2005/01/18 23:54:42 avila Exp $
+%
+% This is an example file and is hereby explicitly put in the
+% public domain.
+%
+\documentclass[cic,tc]{iiufrgs}
+% Para usar o modelo, deve-se informar o programa e o tipo de documento.
+% Programas :
+% * cic       -- Graduação em Ciência da Computação
+% * ecp       -- Graduação em Ciência da Computação
+% * ppgc      -- Programa de Pós Graduação em Computação
+% * pgmigro   -- Programa de Pós Graduação em Microeletrônica
+%
+% Tipos de Documento:
+% * tc                -- Trabalhos de Conclusão (apenas cic e ecp)
+% * diss ou mestrado  -- Dissertações de Mestrado (ppgc e pgmicro)
+% * tese ou doutorado -- Teses de Doutorado (ppgc e pgmicro)
+% * ti                -- Trabalho Individual (ppgc e pgmicro)
+%
+% Outras Opções:
+% * english    -- para textos em inglês
+% * openright  -- Força início de capítulos em páginas ímpares (padrão da
+% biblioteca)
+% * oneside    -- Desliga frente-e-verso
+% * nominatalocal -- Lê os dados da nominata do arquivo nominatalocal.def
+
+
+% Use unicode
+\usepackage[utf8]{inputenc}   % pacote para acentuação
+
+% Necessário para incluir figuras
+\usepackage{graphicx}         % pacote para importar figuras
+
+\usepackage{times}            % pacote para usar fonte Adobe Times
+% \usepackage{palatino}
+% \usepackage{mathptmx}       % p/ usar fonte Adobe Times nas fórmulas
+
+\usepackage[alf,abnt-emphasize=bf]{abntex2cite}	% pacote para usar citações abnt
+\usepackage{amsmath}          % pacote para equações (cases, align, etc.)
+
+%
+% Informações gerais
+%
+\title{Estratégias de Gerenciamento de Tempo por Lance para Agentes MCTS no Jogo Gomoku}
+
+\author{da Silveira}{Arthur Tonial}
+
+
+\advisor[Prof.~Dr.]{Ribas}{Renato Perez}
+% \coadvisor[Prof.~Dr.]{Sobrenome}{Nome}
+
+\location{Porto Alegre}{RS}
+\date{junho}{2026}
+
+%
+% palavras-chave
+% iniciar todas com letras minúsculas, exceto no caso de abreviaturas
+\keyword{Monte Carlo Tree Search}
+\keyword{gerenciamento de tempo}
+\keyword{Gomoku}
+\keyword{jogos de tabuleiro}
+\keyword{inteligência artificial}
+
+%
+% inicio do documento
+%
+\begin{document}
+
+% folha de rosto
+\maketitle
+
+% dedicatoria
+\clearpage
+\begin{flushright}
+    \mbox{}\vfill
+    {\sffamily\itshape
+      ``If I have seen farther than others,\\
+      it is because I stood on the shoulders of giants.''\\}
+    --- \textsc{Sir~Isaac Newton}
+\end{flushright}
+
+% agradecimentos
+\chapter*{Agradecimentos}
+Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
+
+
+
+% resumo na língua do documento
+\begin{abstract}
+% TODO: escrever resumo (máx. 500 palavras)
+\end{abstract}
+
+% resumo na outra língua
+\begin{englishabstract}{Time Management Strategies per Move for MCTS Agents in Gomoku}{Monte Carlo Tree Search. time management. Gomoku. board games. artificial intelligence}
+% TODO: escrever abstract (máx. 500 palavras)
+\end{englishabstract}
+
+% lista de figuras
+\listoffigures
+
+% lista de tabelas
+\listoftables
+
+% lista de abreviaturas e siglas
+\begin{listofabbrv}{MCTS}
+    \item[IA]   Inteligência Artificial
+    \item[MCTS] Monte Carlo Tree Search
+    \item[UCB]  Upper Confidence Bound
+    \item[UCT]  Upper Confidence Bound for Trees
+    \item[GGP]  General Game Playing
+\end{listofabbrv}
+
+% idem para a lista de símbolos
+% \begin{listofsymbols}{$\alpha\beta\pi\omega$}
+%     \item[$\sum{\frac{a}{b}}$] Somatório do produtório
+%     \item[$\alpha\beta\pi\omega$] Fator de inconstância do resultado
+% \end{listofsymbols}
+
+% sumario
+\tableofcontents
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 1 — Introdução
+% -----------------------------------------------------------------------
+\chapter{Introdução}
+% TODO
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 2 — Fundamentação Teórica
+% -----------------------------------------------------------------------
+\chapter{Fundamentação Teórica}
+
+Este capítulo apresenta os conceitos necessários para a compreensão do trabalho. A Seção~\ref{sec:minimax} introduz o algoritmo Minimax e suas extensões clássicas para jogos de dois jogadores. A Seção~\ref{sec:mcts} descreve o Monte Carlo Tree Search, algoritmo sobre o qual este trabalho se apoia. A Seção~\ref{sec:timemanagement} discute o problema de gerenciamento de tempo em jogos e as estratégias de alocação propostas na literatura. Por fim, a Seção~\ref{sec:gomoku} apresenta o jogo Gomoku e suas propriedades relevantes para o contexto deste trabalho.
+
+% ---
+\section{Minimax e Busca em Jogos}
+\label{sec:minimax}
+
+Jogos de dois jogadores com informação perfeita e soma zero constituem um dos domínios mais estudados em Inteligência Artificial. Nesse modelo, dois agentes se alternam realizando movimentos em um estado compartilhado; o ganho de um implica a perda equivalente do outro. Xadrez, damas, Go e Gomoku são exemplos canônicos. A representação natural de uma partida é uma \emph{árvore de jogo}: cada nó corresponde a um estado e cada aresta a um movimento legal, com folhas representando estados terminais cujo valor é determinado pelo resultado da partida.
+
+\subsection{O algoritmo Minimax}
+\label{sec:minimax_alg}
+
+O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore em profundidade, atribuindo a cada nó um valor que reflete o melhor resultado possível sob jogo ótimo de ambos os lados. O jogador maximizador (\emph{MAX}) escolhe o movimento de maior valor; o minimizador (\emph{MIN}) escolhe o de menor. O valor de um nó é definido recursivamente:
+
+\begin{equation}
+    V(n) =
+    \begin{cases}
+        \text{utilidade}(n)             & \text{se } n \text{ é folha}      \\
+        \max_{s \in \text{filhos}(n)} V(s) & \text{se é turno de MAX}       \\
+        \min_{s \in \text{filhos}(n)} V(s) & \text{se é turno de MIN}
+    \end{cases}
+\end{equation}
+
+Para jogos com espaço de busca finito, o Minimax é teoricamente ótimo: garante o melhor resultado possível contra um oponente perfeito. Na prática, porém, a busca exaustiva é inviável para jogos com fator de ramificação elevado. O Xadrez possui fator de ramificação médio de aproximadamente 35 e profundidade média de partida de 80 lances, resultando em uma árvore com $35^{80}$ folhas — muito além da capacidade computacional disponível \cite{shannon1950programming}. Para contornar esse problema, a busca é limitada a uma profundidade predefinida, e os nós não terminais são avaliados por uma função heurística $h(n)$ que estima a utilidade do estado.
+
+\subsection{Poda Alfa-Beta}
+\label{sec:alpha_beta}
+
+A poda alfa-beta \cite{knuth1975analysis} é a otimização mais relevante do Minimax. Ela mantém dois valores ao longo da busca: $\alpha$, o melhor resultado garantido para MAX nos ancestrais do nó atual, e $\beta$, o melhor resultado garantido para MIN. Sempre que $\alpha \geq \beta$ em um nó, os ramos restantes desse nó são descartados (\emph{podados}), pois não podem influenciar a decisão do ancestral.
+
+No melhor caso, com os movimentos ordenados de forma ótima, a poda alfa-beta reduz a complexidade de $O(b^d)$ para $O(b^{d/2})$, efetivamente dobrando a profundidade de busca alcançável \cite{russell2016artificial}. Na prática, a ordem dos movimentos não é ótima, e o ganho situa-se entre os dois extremos. Ainda assim, a poda alfa-beta permitiu que programas de Xadrez atingissem níveis sobre-humanos de jogo combinada com funções de avaliação cuidadosamente elaboradas.
+
+\subsection{Limitações do Minimax em jogos complexos}
+\label{sec:minimax_limits}
+
+Apesar de sua eficácia no Xadrez, o Minimax com poda alfa-beta apresenta limitações fundamentais que o tornam inadequado para jogos como Go e Gomoku. Primeiro, o fator de ramificação do Go em um tabuleiro $19 \times 19$ chega a 361 no primeiro movimento, tornando a busca profunda computacionalmente proibitiva mesmo com poda. Segundo, e mais criticamente, a definição de uma função de avaliação heurística de qualidade para esses jogos é extremamente difícil: no Go, por exemplo, não existe uma heurística largamente aceita que capture com fidelidade a qualidade de uma posição.
+
+Esses obstáculos motivaram o desenvolvimento de abordagens baseadas em simulação, que dispensam a necessidade de uma função de avaliação explícita ao estimar o valor de um estado através de partidas aleatórias \cite{browne2012survey}.
+
+% ---
+\section{Monte Carlo Tree Search}
+\label{sec:mcts}
+
+O Monte Carlo Tree Search (MCTS) é uma família de algoritmos de busca que combina a expansão seletiva de uma árvore de jogo com a estimativa de valores por simulação estocástica \cite{browne2012survey}. Diferentemente do Minimax, o MCTS não requer função de avaliação: o valor de um estado é estimado pela proporção de vitórias obtidas em simulações (chamadas \emph{rollouts}) iniciadas a partir daquele estado.
+
+O MCTS foi proposto independentemente por \citet{coulom2006efficient} e \citet{kocsis2006bandit}, sendo que este último introduziu a variante UCT (\emph{Upper Confidence Bound for Trees}), que se tornou a formulação dominante. A aplicação ao Go por \citet{gelly2006modification} demonstrou saltos substanciais de desempenho em relação às abordagens anteriores, e o algoritmo passou a ser adotado em uma ampla variedade de domínios \cite{browne2012survey}.
+
+\subsection{Visão geral do MCTS}
+\label{sec:mcts_overview}
+
+O MCTS opera iterativamente, construindo uma árvore de busca parcial a partir do estado raiz. Cada iteração compreende quatro fases:
+
+\begin{enumerate}
+    \item \textbf{Seleção}: a partir da raiz, o algoritmo desce a árvore selecionando em cada nó o filho que maximiza um critério de seleção — tipicamente UCB1 (detalhado na Seção~\ref{sec:ucb1}) — até alcançar um nó folha ou um nó não totalmente expandido.
+
+    \item \textbf{Expansão}: se o nó selecionado não é terminal, um ou mais filhos são adicionados à árvore, representando movimentos legais ainda não explorados.
+
+    \item \textbf{Simulação} (\emph{rollout}): a partir do nó expandido, uma partida é simulada até o estado terminal, geralmente com uma política de movimentos aleatória ou levemente guiada por heurísticas.
+
+    \item \textbf{Retropropagação}: o resultado da simulação é propagado de volta ao longo do caminho percorrido, atualizando os contadores de visitas $N(v)$ e de valor acumulado $W(v)$ de cada nó.
+\end{enumerate}
+
+Ao final de um orçamento de iterações ou tempo, o algoritmo retorna o movimento correspondente ao filho da raiz mais visitado, que tende a ser o de maior valor estimado.
+
+\subsection{UCB1 e o dilema exploração-exploração}
+\label{sec:ucb1}
+
+O critério de seleção é o coração do MCTS. O problema pode ser formulado como um \emph{multi-armed bandit}: cada filho de um nó é um braço cujo valor real é desconhecido e deve ser estimado por tentativas sucessivas. O UCB1 (\emph{Upper Confidence Bound 1}), proposto por \citet{auer2002finite}, balanceia a exploração de nós promissores com a exploração de nós pouco visitados:
+
+\begin{equation}
+    \text{UCB1}(v) = \frac{W(v)}{N(v)} + C \cdot \sqrt{\frac{\ln N(\text{pai}(v))}{N(v)}}
+\label{eq:ucb1}
+\end{equation}
+
+onde $W(v)/N(v)$ é a taxa de vitórias estimada do nó $v$ (\emph{exploração}), e o segundo termo favorece nós pouco visitados em relação aos seus irmãos (\emph{exploração}). A constante $C$ controla o balanço entre os dois termos; o valor $C = \sqrt{2}$ é teoricamente motivado \cite{kocsis2006bandit} e amplamente utilizado na prática.
+
+A adaptação do UCB1 para árvores de jogo, denominada UCT (\emph{UCB applied to Trees}), consiste em aplicar a Equação~\ref{eq:ucb1} recursivamente em cada nó durante a fase de seleção, com a ressalva de que os valores são invertidos entre nós de perspectivas opostas, dado que vitória para um jogador é derrota para o outro.
+
+\subsection{MCTS como algoritmo anytime}
+\label{sec:mcts_anytime}
+
+Uma propriedade fundamental do MCTS é sua natureza \emph{anytime}: o algoritmo pode ser interrompido a qualquer momento e retorna uma resposta válida — o movimento mais visitado até então. A qualidade da resposta melhora monotonicamente com o número de iterações: mais simulações implicam estimativas de valor mais precisas e maior profundidade efetiva de busca.
+
+Essa propriedade contrasta diretamente com o Minimax com profundidade fixa, que somente fornece resultado ao completar a busca até a profundidade estipulada. No MCTS, o recurso natural de controle é o tempo disponível: dado um orçamento de $T$ segundos por turno, o algoritmo executa o maior número possível de iterações dentro desse limite. Como a taxa de melhoria decresce com o número de iterações (retornos marginais decrescentes), a questão de \emph{como distribuir} o orçamento total de tempo entre os movimentos de uma partida torna-se relevante — e é precisamente o problema abordado neste trabalho.
+
+% ---
+\section{Gerenciamento de Tempo em Jogos}
+\label{sec:timemanagement}
+
+\subsection{Controle de tempo em competições}
+\label{sec:timecontrol_history}
+
+O controle de tempo é parte integrante das competições de jogos desde o século XIX. No Xadrez, o relógio foi introduzido em 1861 para evitar que partidas se prolongassem indefinidamente \cite{shannon1950programming}. Ao longo do tempo, diferentes modalidades de controle foram adotadas: tempo fixo por partida, tempo fixo por lance, e o sistema Fischer, no qual cada jogador recebe um bônus de tempo a cada lance realizado.
+
+Essas modalidades impõem ao jogador — humano ou computador — o problema de \emph{alocação de tempo}: dado um orçamento total finito $T$, quanto tempo dedicar a cada movimento? Jogadores humanos experientes intuitivamente gastam mais tempo em posições críticas e menos em lances óbvios. A formalização dessa estratégia para agentes automáticos é o objeto de estudo desta seção.
+
+\subsection{Tipos de estratégias de alocação de tempo}
+\label{sec:timealloc_types}
+
+A literatura identifica um espectro de estratégias de alocação de tempo para agentes de jogo. As principais categorias são descritas a seguir, em ordem crescente de sofisticação.
+
+\textbf{Uniforme} (\emph{flat}): o tempo disponível é dividido igualmente entre os movimentos estimados restantes. Formalmente, se $T_r$ é o tempo restante e $\hat{N}$ é a estimativa de movimentos restantes para aquele jogador, o tempo alocado ao lance corrente é $t = T_r / \hat{N}$. Essa abordagem é simples, previsível e serve como baseline natural para comparações.
+
+\textbf{Proporcional}: variante do uniforme que se corrige ao longo da partida. Em vez de usar uma estimativa fixa de movimentos restantes, recalcula $\hat{N}$ com base na posição atual do tabuleiro, ajustando a alocação conforme a partida evolui.
+
+\textbf{Baseada em fase}: aplica multiplicadores distintos sobre a alocação uniforme de acordo com a fase do jogo (abertura, meio, fim). A motivação é que o meio do jogo concentra as decisões táticas mais consequentes, merecendo maior investimento de tempo.
+
+\textbf{Reativa} (ou \emph{baseada em criticidade}): detecta posições táticas especiais — ameaças imediatas de vitória ou derrota — e aloca tempo extra nessas situações. Requer um critério de detecção de criticidade, que pode ir desde padrões simples (como sequências de $k-1$ peças em linha) até avaliações mais elaboradas.
+
+\textbf{Adaptativa/aprendida}: aprende a distribuição ótima de tempo a partir de dados de partidas anteriores, tipicamente por aprendizado por reforço ou análise estatística. Essa abordagem está fora do escopo do presente trabalho, mas é apontada como direção futura relevante.
+
+\subsection{Gerenciamento de tempo para MCTS}
+\label{sec:timemanagement_mcts}
+
+Apesar de sua importância prática, o problema de gerenciamento de tempo para agentes MCTS recebeu atenção relativamente limitada na literatura em comparação com outros aspectos do algoritmo. \citet{huang2010time} investigaram estratégias de alocação para um agente de Go baseado em MCTS, demonstrando que alocações adaptativas — que destinam mais tempo a posições com alta incerteza na estimativa de valor — superam a alocação uniforme em taxa de vitórias. \citet{finnsson2008simulation} abordaram o problema no contexto de \emph{General Game Playing} (GGP), onde o agente deve jogar jogos desconhecidos em tempo limitado, e propuseram heurísticas baseadas na distribuição de visitas da árvore de busca para identificar lances que merecem atenção adicional.
+
+\citet{browne2012survey} identificam o gerenciamento de tempo como um dos fatores práticos mais relevantes para o desempenho de agentes MCTS em competições, destacando que a maioria das implementações utiliza estratégias simples e que há espaço considerável para ganhos através de abordagens mais sofisticadas.
+
+O presente trabalho instancia e compara experimentalmente quatro estratégias de alocação — uniforme, proporcional, por fase e crítica — sobre um agente MCTS aplicado ao Gomoku, com o objetivo de quantificar o impacto de cada abordagem na taxa de vitórias.
+
+% ---
+\section{O Jogo Gomoku}
+\label{sec:gomoku}
+
+\subsection{Regras e estrutura}
+\label{sec:gomoku_rules}
+
+Gomoku é um jogo de tabuleiro de dois jogadores jogado em um tabuleiro de $15 \times 15$ interseções. Os jogadores se alternam colocando peças de suas respectivas cores (preto e branco) em interseções vazias. Vence o jogador que formar primeiro uma sequência ininterrupta de cinco peças em linha — horizontal, vertical ou diagonal. A partida termina em derrota para um dos lados; empates são extremamente raros na prática.
+
+Por convenção e em consonância com a vantagem do primeiro movimento, o jogador de peças pretas realiza o primeiro lance. Estudos e competições com regras simétricas confirmam uma vantagem estatística para o jogador que joga primeiro em condições de jogo livre \cite{allis1994searching}, o que é refletido nos resultados experimentais deste trabalho.
+
+\subsection{Características relevantes para o MCTS}
+\label{sec:gomoku_mcts}
+
+O Gomoku apresenta propriedades que o tornam um domínio adequado para o estudo de estratégias de gerenciamento de tempo aplicadas ao MCTS.
+
+\textbf{Fator de ramificação variável}: no início da partida, o número de movimentos legais é igual ao número de interseções vazias — até 225 no primeiro lance. Esse número decresce linearmente ao longo da partida, tornando a busca progressivamente mais profunda e precisa com o mesmo orçamento de tempo. Isso implica que a alocação de tempo no início da partida é proporcionalmente menos eficiente do que no final, o que motiva estratégias que considerem a fase do jogo.
+
+\textbf{Fases distintas}: a partida pode ser dividida em fases com características estratégicas distintas. Na abertura, o tabuleiro é esparso e as decisões têm caráter posicional de longo prazo. No meio do jogo, surgem ameaças táticas diretas — sequências de três e quatro peças em linha — que demandam resposta imediata. No final, o tabuleiro está mais preenchido e as sequências críticas são mais frequentes. Essa estrutura justifica estratégias baseadas em fase.
+
+\textbf{Padrões táticos críticos}: a ameaça de 4-em-linha aberta (quatro peças consecutivas com ambas as extremidades livres) constitui uma ameaça imediata de vitória que, se não bloqueada, resulta inevitavelmente em derrota. Da mesma forma, um jogador que cria duas ameaças simultâneas de 3-em-linha (denominado \emph{duplo três}) garante a vitória independentemente da resposta do oponente. Esses padrões motivam estratégias de alocação reativas que identificam posições críticas e destinam tempo adicional a elas.
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 3 — Proposta (TODO)
+% -----------------------------------------------------------------------
+\chapter{Proposta}
+% TODO
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 4 — Implementação (TODO)
+% -----------------------------------------------------------------------
+\chapter{Implementação}
+% TODO
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 5 — Resultados e Análise (TODO)
+% -----------------------------------------------------------------------
+\chapter{Resultados e Análise}
+% TODO
+
+% -----------------------------------------------------------------------
+% CAPÍTULO 6 — Conclusão (TODO)
+% -----------------------------------------------------------------------
+\chapter{Conclusão}
+% TODO
+
+% referências
+% aqui será usado o environment padrao `thebibliography'; porém, sugere-se
+% seriamente o uso de BibTeX e do estilo abnt.bst (veja na página do
+% UTUG)
+% 
+% observe também o estilo meio estranho de alguns labels; isso é
+% devido ao uso do pacote `natbib', que permite fazer citações de
+% autores, ano, e diversas combinações desses
+
+\bibliographystyle{abntex2-alf}
+\bibliography{biblio}
+
+\end{document}
