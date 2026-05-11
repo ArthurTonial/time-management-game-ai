@@ -23,12 +23,10 @@ def make_move(state, time_limit: float = DEFAULT_TIME_LIMIT) -> Tuple[int, int]:
     if len(legal_moves) == 1:
         return legal_moves[0]
 
-    print(f"  Thinking for {time_limit:.1f}s ({len(legal_moves)} legal moves)...")
-    start = time.time()
-
+    # print(f"  Thinking for {time_limit:.1f}s ({len(legal_moves)} legal moves)...")
+    # start = time.time()
     move = mcts_search(state, time_limit=time_limit)
-
-    elapsed = time.time() - start
-    print(f"  Decision made in {elapsed:.2f}s")
+    # elapsed = time.time() - start
+    # print(f"  Decision made in {elapsed:.2f}s")
 
     return move if move is not None else legal_moves[0]

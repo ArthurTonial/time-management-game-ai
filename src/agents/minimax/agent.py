@@ -30,10 +30,11 @@ def make_move(state) -> Tuple[int, int]:
         move_gen = None
         depth = 4
 
-    print(f"  Thinking with Minimax depth {depth} ({len(legal_moves)} legal moves)...")
-    start = time.time()
+    # print(f"  Thinking with Minimax depth {depth} ({len(legal_moves)} legal moves)...")
+    # start = time.time()
     move = minimax_move(state, max_depth=depth, eval_func=eval_func, move_generator=move_gen)
-    print(f"  Decision made in {time.time() - start:.2f}s")
+    # elapsed = time.time() - start
+    # print(f"  Decision made in {elapsed:.2f}s")
     return move
 
 
