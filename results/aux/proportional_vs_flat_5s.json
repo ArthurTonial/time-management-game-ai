@@ -1,0 +1,2497 @@
+{
+  "config": {
+    "strategy": "proportional",
+    "baseline": "flat",
+    "time_budget": 5.0,
+    "matches": 2,
+    "timestamp": "2026-04-21T15:33:38.297935"
+  },
+  "summary": {
+    "strategy": "proportional",
+    "baseline": "flat",
+    "total_matches": 2,
+    "strategy_wins": 1,
+    "baseline_wins": 1,
+    "draws": 0,
+    "strategy_win_rate": 0.5,
+    "baseline_win_rate": 0.5,
+    "avg_time_allocated_strategy": 0.1033,
+    "avg_time_allocated_baseline": 0.103
+  },
+  "matches": [
+    {
+      "strategy_color": "B",
+      "winner_color": "W",
+      "winner_strategy": "flat",
+      "move_count": 102,
+      "time_remaining_end": {
+        "B": 0.0,
+        "W": 0.0
+      },
+      "moves": [
+        {
+          "move_number": 0,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.125,
+          "time_spent": 0.1505,
+          "time_remaining_after": 4.8495,
+          "move": [
+            7,
+            8
+          ]
+        },
+        {
+          "move_number": 1,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.125,
+          "time_spent": 0.1292,
+          "time_remaining_after": 4.8708,
+          "move": [
+            6,
+            9
+          ]
+        },
+        {
+          "move_number": 2,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1243,
+          "time_spent": 0.128,
+          "time_remaining_after": 4.7216,
+          "move": [
+            6,
+            0
+          ]
+        },
+        {
+          "move_number": 3,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1249,
+          "time_spent": 0.1356,
+          "time_remaining_after": 4.7352,
+          "move": [
+            13,
+            6
+          ]
+        },
+        {
+          "move_number": 4,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1243,
+          "time_spent": 0.1248,
+          "time_remaining_after": 4.5968,
+          "move": [
+            11,
+            12
+          ]
+        },
+        {
+          "move_number": 5,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1246,
+          "time_spent": 0.1273,
+          "time_remaining_after": 4.6079,
+          "move": [
+            2,
+            9
+          ]
+        },
+        {
+          "move_number": 6,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1242,
+          "time_spent": 0.133,
+          "time_remaining_after": 4.4638,
+          "move": [
+            0,
+            12
+          ]
+        },
+        {
+          "move_number": 7,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1245,
+          "time_spent": 0.126,
+          "time_remaining_after": 4.4819,
+          "move": [
+            10,
+            13
+          ]
+        },
+        {
+          "move_number": 8,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.124,
+          "time_spent": 0.1281,
+          "time_remaining_after": 4.3357,
+          "move": [
+            9,
+            6
+          ]
+        },
+        {
+          "move_number": 9,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1245,
+          "time_spent": 0.1343,
+          "time_remaining_after": 4.3476,
+          "move": [
+            11,
+            3
+          ]
+        },
+        {
+          "move_number": 10,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1239,
+          "time_spent": 0.1266,
+          "time_remaining_after": 4.2091,
+          "move": [
+            2,
+            0
+          ]
+        },
+        {
+          "move_number": 11,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1242,
+          "time_spent": 0.1406,
+          "time_remaining_after": 4.2071,
+          "move": [
+            0,
+            3
+          ]
+        },
+        {
+          "move_number": 12,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1238,
+          "time_spent": 0.1577,
+          "time_remaining_after": 4.0514,
+          "move": [
+            1,
+            1
+          ]
+        },
+        {
+          "move_number": 13,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1237,
+          "time_spent": 0.1402,
+          "time_remaining_after": 4.0668,
+          "move": [
+            10,
+            4
+          ]
+        },
+        {
+          "move_number": 14,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1228,
+          "time_spent": 0.1551,
+          "time_remaining_after": 3.8963,
+          "move": [
+            8,
+            7
+          ]
+        },
+        {
+          "move_number": 15,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1232,
+          "time_spent": 0.131,
+          "time_remaining_after": 3.9358,
+          "move": [
+            5,
+            8
+          ]
+        },
+        {
+          "move_number": 16,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1218,
+          "time_spent": 0.1246,
+          "time_remaining_after": 3.7717,
+          "move": [
+            4,
+            7
+          ]
+        },
+        {
+          "move_number": 17,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.123,
+          "time_spent": 0.151,
+          "time_remaining_after": 3.7848,
+          "move": [
+            12,
+            11
+          ]
+        },
+        {
+          "move_number": 18,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1217,
+          "time_spent": 0.1299,
+          "time_remaining_after": 3.6419,
+          "move": [
+            12,
+            2
+          ]
+        },
+        {
+          "move_number": 19,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1221,
+          "time_spent": 0.1344,
+          "time_remaining_after": 3.6504,
+          "move": [
+            7,
+            6
+          ]
+        },
+        {
+          "move_number": 20,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1214,
+          "time_spent": 0.1222,
+          "time_remaining_after": 3.5197,
+          "move": [
+            6,
+            7
+          ]
+        },
+        {
+          "move_number": 21,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1217,
+          "time_spent": 0.1274,
+          "time_remaining_after": 3.523,
+          "move": [
+            13,
+            13
+          ]
+        },
+        {
+          "move_number": 22,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1214,
+          "time_spent": 0.1407,
+          "time_remaining_after": 3.3791,
+          "move": [
+            11,
+            10
+          ]
+        },
+        {
+          "move_number": 23,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1215,
+          "time_spent": 0.1276,
+          "time_remaining_after": 3.3954,
+          "move": [
+            2,
+            7
+          ]
+        },
+        {
+          "move_number": 24,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1207,
+          "time_spent": 0.123,
+          "time_remaining_after": 3.2561,
+          "move": [
+            0,
+            10
+          ]
+        },
+        {
+          "move_number": 25,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1213,
+          "time_spent": 0.1494,
+          "time_remaining_after": 3.246,
+          "move": [
+            9,
+            13
+          ]
+        },
+        {
+          "move_number": 26,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1206,
+          "time_spent": 0.1222,
+          "time_remaining_after": 3.1338,
+          "move": [
+            10,
+            11
+          ]
+        },
+        {
+          "move_number": 27,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1202,
+          "time_spent": 0.1328,
+          "time_remaining_after": 3.1132,
+          "move": [
+            8,
+            14
+          ]
+        },
+        {
+          "move_number": 28,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1205,
+          "time_spent": 0.1302,
+          "time_remaining_after": 3.0036,
+          "move": [
+            11,
+            1
+          ]
+        },
+        {
+          "move_number": 29,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1197,
+          "time_spent": 0.1325,
+          "time_remaining_after": 2.9807,
+          "move": [
+            0,
+            1
+          ]
+        },
+        {
+          "move_number": 30,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1201,
+          "time_spent": 0.1251,
+          "time_remaining_after": 2.8785,
+          "move": [
+            9,
+            4
+          ]
+        },
+        {
+          "move_number": 31,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1192,
+          "time_spent": 0.1299,
+          "time_remaining_after": 2.8509,
+          "move": [
+            10,
+            2
+          ]
+        },
+        {
+          "move_number": 32,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1199,
+          "time_spent": 0.1267,
+          "time_remaining_after": 2.7518,
+          "move": [
+            8,
+            5
+          ]
+        },
+        {
+          "move_number": 33,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1188,
+          "time_spent": 0.1415,
+          "time_remaining_after": 2.7093,
+          "move": [
+            4,
+            14
+          ]
+        },
+        {
+          "move_number": 34,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1196,
+          "time_spent": 0.1259,
+          "time_remaining_after": 2.626,
+          "move": [
+            4,
+            5
+          ]
+        },
+        {
+          "move_number": 35,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1178,
+          "time_spent": 0.1277,
+          "time_remaining_after": 2.5816,
+          "move": [
+            14,
+            6
+          ]
+        },
+        {
+          "move_number": 36,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1194,
+          "time_spent": 0.137,
+          "time_remaining_after": 2.489,
+          "move": [
+            12,
+            9
+          ]
+        },
+        {
+          "move_number": 37,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1173,
+          "time_spent": 0.1192,
+          "time_remaining_after": 2.4624,
+          "move": [
+            7,
+            13
+          ]
+        },
+        {
+          "move_number": 38,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1185,
+          "time_spent": 0.1241,
+          "time_remaining_after": 2.3648,
+          "move": [
+            6,
+            14
+          ]
+        },
+        {
+          "move_number": 39,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1173,
+          "time_spent": 0.1298,
+          "time_remaining_after": 2.3326,
+          "move": [
+            12,
+            0
+          ]
+        },
+        {
+          "move_number": 40,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1182,
+          "time_spent": 0.1191,
+          "time_remaining_after": 2.2458,
+          "move": [
+            6,
+            5
+          ]
+        },
+        {
+          "move_number": 41,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1166,
+          "time_spent": 0.1253,
+          "time_remaining_after": 2.2073,
+          "move": [
+            2,
+            14
+          ]
+        },
+        {
+          "move_number": 42,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1182,
+          "time_spent": 0.1221,
+          "time_remaining_after": 2.1236,
+          "move": [
+            9,
+            11
+          ]
+        },
+        {
+          "move_number": 43,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1162,
+          "time_spent": 0.1166,
+          "time_remaining_after": 2.0907,
+          "move": [
+            11,
+            8
+          ]
+        },
+        {
+          "move_number": 44,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.118,
+          "time_spent": 0.1235,
+          "time_remaining_after": 2.0002,
+          "move": [
+            2,
+            5
+          ]
+        },
+        {
+          "move_number": 45,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1161,
+          "time_spent": 0.1168,
+          "time_remaining_after": 1.9739,
+          "move": [
+            0,
+            8
+          ]
+        },
+        {
+          "move_number": 46,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1177,
+          "time_spent": 0.121,
+          "time_remaining_after": 1.8792,
+          "move": [
+            1,
+            6
+          ]
+        },
+        {
+          "move_number": 47,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1161,
+          "time_spent": 0.1168,
+          "time_remaining_after": 1.8571,
+          "move": [
+            10,
+            9
+          ]
+        },
+        {
+          "move_number": 48,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1175,
+          "time_spent": 0.1268,
+          "time_remaining_after": 1.7525,
+          "move": [
+            8,
+            12
+          ]
+        },
+        {
+          "move_number": 49,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1161,
+          "time_spent": 0.1347,
+          "time_remaining_after": 1.7224,
+          "move": [
+            10,
+            0
+          ]
+        },
+        {
+          "move_number": 50,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1168,
+          "time_spent": 0.1206,
+          "time_remaining_after": 1.6319,
+          "move": [
+            8,
+            3
+          ]
+        },
+        {
+          "move_number": 51,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1148,
+          "time_spent": 0.1153,
+          "time_remaining_after": 1.6071,
+          "move": [
+            4,
+            12
+          ]
+        },
+        {
+          "move_number": 52,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1166,
+          "time_spent": 0.1193,
+          "time_remaining_after": 1.5126,
+          "move": [
+            4,
+            3
+          ]
+        },
+        {
+          "move_number": 53,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1148,
+          "time_spent": 0.13,
+          "time_remaining_after": 1.4772,
+          "move": [
+            14,
+            4
+          ]
+        },
+        {
+          "move_number": 54,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1164,
+          "time_spent": 0.1223,
+          "time_remaining_after": 1.3902,
+          "move": [
+            3,
+            4
+          ]
+        },
+        {
+          "move_number": 55,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1136,
+          "time_spent": 0.1139,
+          "time_remaining_after": 1.3633,
+          "move": [
+            12,
+            7
+          ]
+        },
+        {
+          "move_number": 56,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1159,
+          "time_spent": 0.1162,
+          "time_remaining_after": 1.2741,
+          "move": [
+            6,
+            12
+          ]
+        },
+        {
+          "move_number": 57,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1136,
+          "time_spent": 0.1307,
+          "time_remaining_after": 1.2325,
+          "move": [
+            6,
+            3
+          ]
+        },
+        {
+          "move_number": 58,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1158,
+          "time_spent": 0.1217,
+          "time_remaining_after": 1.1524,
+          "move": [
+            2,
+            12
+          ]
+        },
+        {
+          "move_number": 59,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.112,
+          "time_spent": 0.114,
+          "time_remaining_after": 1.1185,
+          "move": [
+            1,
+            13
+          ]
+        },
+        {
+          "move_number": 60,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1152,
+          "time_spent": 0.128,
+          "time_remaining_after": 1.0243,
+          "move": [
+            11,
+            6
+          ]
+        },
+        {
+          "move_number": 61,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1119,
+          "time_spent": 0.1172,
+          "time_remaining_after": 1.0014,
+          "move": [
+            2,
+            3
+          ]
+        },
+        {
+          "move_number": 62,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1138,
+          "time_spent": 0.1222,
+          "time_remaining_after": 0.9022,
+          "move": [
+            0,
+            6
+          ]
+        },
+        {
+          "move_number": 63,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1113,
+          "time_spent": 0.1146,
+          "time_remaining_after": 0.8868,
+          "move": [
+            1,
+            4
+          ]
+        },
+        {
+          "move_number": 64,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1128,
+          "time_spent": 0.1209,
+          "time_remaining_after": 0.7813,
+          "move": [
+            10,
+            7
+          ]
+        },
+        {
+          "move_number": 65,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1108,
+          "time_spent": 0.1156,
+          "time_remaining_after": 0.7711,
+          "move": [
+            8,
+            10
+          ]
+        },
+        {
+          "move_number": 66,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1116,
+          "time_spent": 0.1118,
+          "time_remaining_after": 0.6695,
+          "move": [
+            8,
+            1
+          ]
+        },
+        {
+          "move_number": 67,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1102,
+          "time_spent": 0.1225,
+          "time_remaining_after": 0.6486,
+          "move": [
+            4,
+            10
+          ]
+        },
+        {
+          "move_number": 68,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1116,
+          "time_spent": 0.118,
+          "time_remaining_after": 0.5516,
+          "move": [
+            14,
+            11
+          ]
+        },
+        {
+          "move_number": 69,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1081,
+          "time_spent": 0.1088,
+          "time_remaining_after": 0.5398,
+          "move": [
+            3,
+            11
+          ]
+        },
+        {
+          "move_number": 70,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1103,
+          "time_spent": 0.1171,
+          "time_remaining_after": 0.4344,
+          "move": [
+            12,
+            14
+          ]
+        },
+        {
+          "move_number": 71,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.108,
+          "time_spent": 0.108,
+          "time_remaining_after": 0.4318,
+          "move": [
+            4,
+            1
+          ]
+        },
+        {
+          "move_number": 72,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1086,
+          "time_spent": 0.1146,
+          "time_remaining_after": 0.3198,
+          "move": [
+            14,
+            2
+          ]
+        },
+        {
+          "move_number": 73,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1079,
+          "time_spent": 0.1099,
+          "time_remaining_after": 0.3219,
+          "move": [
+            3,
+            2
+          ]
+        },
+        {
+          "move_number": 74,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1066,
+          "time_spent": 0.1071,
+          "time_remaining_after": 0.2127,
+          "move": [
+            12,
+            5
+          ]
+        },
+        {
+          "move_number": 75,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.1073,
+          "time_spent": 0.1098,
+          "time_remaining_after": 0.212,
+          "move": [
+            6,
+            10
+          ]
+        },
+        {
+          "move_number": 76,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.1063,
+          "time_spent": 0.1084,
+          "time_remaining_after": 0.1043,
+          "move": [
+            11,
+            13
+          ]
+        },
+        {
+          "move_number": 77,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.106,
+          "time_spent": 0.1099,
+          "time_remaining_after": 0.1021,
+          "move": [
+            2,
+            10
+          ]
+        },
+        {
+          "move_number": 78,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.0991,
+          "time_spent": 0.1106,
+          "time_remaining_after": 0.0,
+          "move": [
+            0,
+            13
+          ]
+        },
+        {
+          "move_number": 79,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.097,
+          "time_spent": 0.1018,
+          "time_remaining_after": 0.0003,
+          "move": [
+            1,
+            11
+          ]
+        },
+        {
+          "move_number": 80,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0529,
+          "time_remaining_after": 0.0,
+          "move": [
+            10,
+            14
+          ]
+        },
+        {
+          "move_number": 81,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0574,
+          "time_remaining_after": 0.0,
+          "move": [
+            13,
+            4
+          ]
+        },
+        {
+          "move_number": 82,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0536,
+          "time_remaining_after": 0.0,
+          "move": [
+            2,
+            1
+          ]
+        },
+        {
+          "move_number": 83,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0531,
+          "time_remaining_after": 0.0,
+          "move": [
+            0,
+            4
+          ]
+        },
+        {
+          "move_number": 84,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0546,
+          "time_remaining_after": 0.0,
+          "move": [
+            1,
+            2
+          ]
+        },
+        {
+          "move_number": 85,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0583,
+          "time_remaining_after": 0.0,
+          "move": [
+            10,
+            5
+          ]
+        },
+        {
+          "move_number": 86,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0549,
+          "time_remaining_after": 0.0,
+          "move": [
+            8,
+            8
+          ]
+        },
+        {
+          "move_number": 87,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0661,
+          "time_remaining_after": 0.0,
+          "move": [
+            14,
+            9
+          ]
+        },
+        {
+          "move_number": 88,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0548,
+          "time_remaining_after": 0.0,
+          "move": [
+            4,
+            8
+          ]
+        },
+        {
+          "move_number": 89,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0526,
+          "time_remaining_after": 0.0,
+          "move": [
+            5,
+            6
+          ]
+        },
+        {
+          "move_number": 90,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0517,
+          "time_remaining_after": 0.0,
+          "move": [
+            3,
+            9
+          ]
+        },
+        {
+          "move_number": 91,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0534,
+          "time_remaining_after": 0.0,
+          "move": [
+            12,
+            12
+          ]
+        },
+        {
+          "move_number": 92,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0514,
+          "time_remaining_after": 0.0,
+          "move": [
+            14,
+            0
+          ]
+        },
+        {
+          "move_number": 93,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0549,
+          "time_remaining_after": 0.0,
+          "move": [
+            3,
+            0
+          ]
+        },
+        {
+          "move_number": 94,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0523,
+          "time_remaining_after": 0.0,
+          "move": [
+            12,
+            3
+          ]
+        },
+        {
+          "move_number": 95,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0523,
+          "time_remaining_after": 0.0,
+          "move": [
+            6,
+            8
+          ]
+        },
+        {
+          "move_number": 96,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0526,
+          "time_remaining_after": 0.0,
+          "move": [
+            13,
+            11
+          ]
+        },
+        {
+          "move_number": 97,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0503,
+          "time_remaining_after": 0.0,
+          "move": [
+            7,
+            4
+          ]
+        },
+        {
+          "move_number": 98,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0505,
+          "time_remaining_after": 0.0,
+          "move": [
+            11,
+            11
+          ]
+        },
+        {
+          "move_number": 99,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0536,
+          "time_remaining_after": 0.0,
+          "move": [
+            2,
+            8
+          ]
+        },
+        {
+          "move_number": 100,
+          "player": "B",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0511,
+          "time_remaining_after": 0.0,
+          "move": [
+            0,
+            11
+          ]
+        },
+        {
+          "move_number": 101,
+          "player": "W",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.051,
+          "time_remaining_after": 0.0,
+          "move": [
+            1,
+            9
+          ]
+        }
+      ],
+      "match_id": 0
+    },
+    {
+      "strategy_color": "W",
+      "winner_color": "W",
+      "winner_strategy": "proportional",
+      "move_count": 102,
+      "time_remaining_end": {
+        "B": 0.0,
+        "W": 0.0
+      },
+      "moves": [
+        {
+          "move_number": 0,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.125,
+          "time_spent": 0.1338,
+          "time_remaining_after": 4.8662,
+          "move": [
+            7,
+            8
+          ]
+        },
+        {
+          "move_number": 1,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.125,
+          "time_spent": 0.1373,
+          "time_remaining_after": 4.8627,
+          "move": [
+            6,
+            9
+          ]
+        },
+        {
+          "move_number": 2,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1248,
+          "time_spent": 0.1392,
+          "time_remaining_after": 4.727,
+          "move": [
+            6,
+            0
+          ]
+        },
+        {
+          "move_number": 3,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1247,
+          "time_spent": 0.1295,
+          "time_remaining_after": 4.7332,
+          "move": [
+            13,
+            6
+          ]
+        },
+        {
+          "move_number": 4,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1244,
+          "time_spent": 0.1508,
+          "time_remaining_after": 4.5762,
+          "move": [
+            11,
+            12
+          ]
+        },
+        {
+          "move_number": 5,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1246,
+          "time_spent": 0.1328,
+          "time_remaining_after": 4.6004,
+          "move": [
+            2,
+            9
+          ]
+        },
+        {
+          "move_number": 6,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1237,
+          "time_spent": 0.135,
+          "time_remaining_after": 4.4413,
+          "move": [
+            0,
+            12
+          ]
+        },
+        {
+          "move_number": 7,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1243,
+          "time_spent": 0.1268,
+          "time_remaining_after": 4.4736,
+          "move": [
+            10,
+            13
+          ]
+        },
+        {
+          "move_number": 8,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1234,
+          "time_spent": 0.1372,
+          "time_remaining_after": 4.304,
+          "move": [
+            9,
+            6
+          ]
+        },
+        {
+          "move_number": 9,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1243,
+          "time_spent": 0.129,
+          "time_remaining_after": 4.3446,
+          "move": [
+            11,
+            3
+          ]
+        },
+        {
+          "move_number": 10,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.123,
+          "time_spent": 0.123,
+          "time_remaining_after": 4.181,
+          "move": [
+            2,
+            0
+          ]
+        },
+        {
+          "move_number": 11,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1241,
+          "time_spent": 0.126,
+          "time_remaining_after": 4.2186,
+          "move": [
+            0,
+            3
+          ]
+        },
+        {
+          "move_number": 12,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.123,
+          "time_spent": 0.1406,
+          "time_remaining_after": 4.0404,
+          "move": [
+            1,
+            1
+          ]
+        },
+        {
+          "move_number": 13,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1241,
+          "time_spent": 0.1454,
+          "time_remaining_after": 4.0732,
+          "move": [
+            10,
+            4
+          ]
+        },
+        {
+          "move_number": 14,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1224,
+          "time_spent": 0.1246,
+          "time_remaining_after": 3.9158,
+          "move": [
+            8,
+            7
+          ]
+        },
+        {
+          "move_number": 15,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1234,
+          "time_spent": 0.1254,
+          "time_remaining_after": 3.9478,
+          "move": [
+            5,
+            8
+          ]
+        },
+        {
+          "move_number": 16,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1224,
+          "time_spent": 0.1225,
+          "time_remaining_after": 3.7933,
+          "move": [
+            4,
+            7
+          ]
+        },
+        {
+          "move_number": 17,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1234,
+          "time_spent": 0.1425,
+          "time_remaining_after": 3.8053,
+          "move": [
+            12,
+            11
+          ]
+        },
+        {
+          "move_number": 18,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1224,
+          "time_spent": 0.1285,
+          "time_remaining_after": 3.6647,
+          "move": [
+            12,
+            2
+          ]
+        },
+        {
+          "move_number": 19,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1228,
+          "time_spent": 0.1313,
+          "time_remaining_after": 3.674,
+          "move": [
+            7,
+            6
+          ]
+        },
+        {
+          "move_number": 20,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1222,
+          "time_spent": 0.13,
+          "time_remaining_after": 3.5348,
+          "move": [
+            6,
+            7
+          ]
+        },
+        {
+          "move_number": 21,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1225,
+          "time_spent": 0.1263,
+          "time_remaining_after": 3.5477,
+          "move": [
+            13,
+            13
+          ]
+        },
+        {
+          "move_number": 22,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1219,
+          "time_spent": 0.1364,
+          "time_remaining_after": 3.3984,
+          "move": [
+            11,
+            10
+          ]
+        },
+        {
+          "move_number": 23,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1223,
+          "time_spent": 0.1251,
+          "time_remaining_after": 3.4226,
+          "move": [
+            2,
+            7
+          ]
+        },
+        {
+          "move_number": 24,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1214,
+          "time_spent": 0.1266,
+          "time_remaining_after": 3.2718,
+          "move": [
+            0,
+            10
+          ]
+        },
+        {
+          "move_number": 25,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1222,
+          "time_spent": 0.1225,
+          "time_remaining_after": 3.3001,
+          "move": [
+            9,
+            13
+          ]
+        },
+        {
+          "move_number": 26,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1212,
+          "time_spent": 0.1218,
+          "time_remaining_after": 3.15,
+          "move": [
+            10,
+            11
+          ]
+        },
+        {
+          "move_number": 27,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1222,
+          "time_spent": 0.1274,
+          "time_remaining_after": 3.1728,
+          "move": [
+            8,
+            14
+          ]
+        },
+        {
+          "move_number": 28,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1212,
+          "time_spent": 0.1252,
+          "time_remaining_after": 3.0248,
+          "move": [
+            11,
+            1
+          ]
+        },
+        {
+          "move_number": 29,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.122,
+          "time_spent": 0.1329,
+          "time_remaining_after": 3.0399,
+          "move": [
+            0,
+            1
+          ]
+        },
+        {
+          "move_number": 30,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.121,
+          "time_spent": 0.1264,
+          "time_remaining_after": 2.8984,
+          "move": [
+            9,
+            4
+          ]
+        },
+        {
+          "move_number": 31,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1216,
+          "time_spent": 0.1306,
+          "time_remaining_after": 2.9093,
+          "move": [
+            10,
+            2
+          ]
+        },
+        {
+          "move_number": 32,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1208,
+          "time_spent": 0.1296,
+          "time_remaining_after": 2.7688,
+          "move": [
+            8,
+            5
+          ]
+        },
+        {
+          "move_number": 33,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1212,
+          "time_spent": 0.1379,
+          "time_remaining_after": 2.7714,
+          "move": [
+            4,
+            14
+          ]
+        },
+        {
+          "move_number": 34,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1204,
+          "time_spent": 0.1258,
+          "time_remaining_after": 2.6429,
+          "move": [
+            4,
+            5
+          ]
+        },
+        {
+          "move_number": 35,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1205,
+          "time_spent": 0.1383,
+          "time_remaining_after": 2.6331,
+          "move": [
+            14,
+            6
+          ]
+        },
+        {
+          "move_number": 36,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1201,
+          "time_spent": 0.1202,
+          "time_remaining_after": 2.5227,
+          "move": [
+            12,
+            9
+          ]
+        },
+        {
+          "move_number": 37,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1197,
+          "time_spent": 0.1294,
+          "time_remaining_after": 2.5037,
+          "move": [
+            7,
+            13
+          ]
+        },
+        {
+          "move_number": 38,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1201,
+          "time_spent": 0.1271,
+          "time_remaining_after": 2.3956,
+          "move": [
+            6,
+            14
+          ]
+        },
+        {
+          "move_number": 39,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1192,
+          "time_spent": 0.12,
+          "time_remaining_after": 2.3837,
+          "move": [
+            12,
+            0
+          ]
+        },
+        {
+          "move_number": 40,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1198,
+          "time_spent": 0.1199,
+          "time_remaining_after": 2.2757,
+          "move": [
+            6,
+            5
+          ]
+        },
+        {
+          "move_number": 41,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1192,
+          "time_spent": 0.1245,
+          "time_remaining_after": 2.2592,
+          "move": [
+            2,
+            14
+          ]
+        },
+        {
+          "move_number": 42,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1198,
+          "time_spent": 0.1268,
+          "time_remaining_after": 2.1489,
+          "move": [
+            9,
+            11
+          ]
+        },
+        {
+          "move_number": 43,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1189,
+          "time_spent": 0.133,
+          "time_remaining_after": 2.1262,
+          "move": [
+            11,
+            8
+          ]
+        },
+        {
+          "move_number": 44,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1194,
+          "time_spent": 0.1201,
+          "time_remaining_after": 2.0288,
+          "move": [
+            2,
+            5
+          ]
+        },
+        {
+          "move_number": 45,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1181,
+          "time_spent": 0.1198,
+          "time_remaining_after": 2.0064,
+          "move": [
+            0,
+            8
+          ]
+        },
+        {
+          "move_number": 46,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1193,
+          "time_spent": 0.1236,
+          "time_remaining_after": 1.9052,
+          "move": [
+            1,
+            6
+          ]
+        },
+        {
+          "move_number": 47,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.118,
+          "time_spent": 0.1219,
+          "time_remaining_after": 1.8845,
+          "move": [
+            10,
+            9
+          ]
+        },
+        {
+          "move_number": 48,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1191,
+          "time_spent": 0.1224,
+          "time_remaining_after": 1.7828,
+          "move": [
+            8,
+            12
+          ]
+        },
+        {
+          "move_number": 49,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1178,
+          "time_spent": 0.12,
+          "time_remaining_after": 1.7645,
+          "move": [
+            10,
+            0
+          ]
+        },
+        {
+          "move_number": 50,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1189,
+          "time_spent": 0.1221,
+          "time_remaining_after": 1.6607,
+          "move": [
+            8,
+            3
+          ]
+        },
+        {
+          "move_number": 51,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1176,
+          "time_spent": 0.1235,
+          "time_remaining_after": 1.641,
+          "move": [
+            4,
+            12
+          ]
+        },
+        {
+          "move_number": 52,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1186,
+          "time_spent": 0.1213,
+          "time_remaining_after": 1.5394,
+          "move": [
+            4,
+            3
+          ]
+        },
+        {
+          "move_number": 53,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1172,
+          "time_spent": 0.1209,
+          "time_remaining_after": 1.5201,
+          "move": [
+            14,
+            4
+          ]
+        },
+        {
+          "move_number": 54,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1184,
+          "time_spent": 0.127,
+          "time_remaining_after": 1.4124,
+          "move": [
+            3,
+            4
+          ]
+        },
+        {
+          "move_number": 55,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1169,
+          "time_spent": 0.1218,
+          "time_remaining_after": 1.3983,
+          "move": [
+            12,
+            7
+          ]
+        },
+        {
+          "move_number": 56,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1177,
+          "time_spent": 0.1289,
+          "time_remaining_after": 1.2835,
+          "move": [
+            6,
+            12
+          ]
+        },
+        {
+          "move_number": 57,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1165,
+          "time_spent": 0.1188,
+          "time_remaining_after": 1.2795,
+          "move": [
+            6,
+            3
+          ]
+        },
+        {
+          "move_number": 58,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1167,
+          "time_spent": 0.1194,
+          "time_remaining_after": 1.1641,
+          "move": [
+            2,
+            12
+          ]
+        },
+        {
+          "move_number": 59,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1163,
+          "time_spent": 0.1281,
+          "time_remaining_after": 1.1514,
+          "move": [
+            1,
+            13
+          ]
+        },
+        {
+          "move_number": 60,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1164,
+          "time_spent": 0.1167,
+          "time_remaining_after": 1.0474,
+          "move": [
+            11,
+            6
+          ]
+        },
+        {
+          "move_number": 61,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1151,
+          "time_spent": 0.1194,
+          "time_remaining_after": 1.032,
+          "move": [
+            2,
+            3
+          ]
+        },
+        {
+          "move_number": 62,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1164,
+          "time_spent": 0.1182,
+          "time_remaining_after": 0.9292,
+          "move": [
+            0,
+            6
+          ]
+        },
+        {
+          "move_number": 63,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1147,
+          "time_spent": 0.1233,
+          "time_remaining_after": 0.9087,
+          "move": [
+            1,
+            4
+          ]
+        },
+        {
+          "move_number": 64,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1161,
+          "time_spent": 0.1216,
+          "time_remaining_after": 0.8076,
+          "move": [
+            10,
+            7
+          ]
+        },
+        {
+          "move_number": 65,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1136,
+          "time_spent": 0.1176,
+          "time_remaining_after": 0.7911,
+          "move": [
+            8,
+            10
+          ]
+        },
+        {
+          "move_number": 66,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1154,
+          "time_spent": 0.1194,
+          "time_remaining_after": 0.6882,
+          "move": [
+            8,
+            1
+          ]
+        },
+        {
+          "move_number": 67,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.113,
+          "time_spent": 0.1177,
+          "time_remaining_after": 0.6735,
+          "move": [
+            4,
+            10
+          ]
+        },
+        {
+          "move_number": 68,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1147,
+          "time_spent": 0.1189,
+          "time_remaining_after": 0.5694,
+          "move": [
+            14,
+            11
+          ]
+        },
+        {
+          "move_number": 69,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1122,
+          "time_spent": 0.1139,
+          "time_remaining_after": 0.5596,
+          "move": [
+            3,
+            11
+          ]
+        },
+        {
+          "move_number": 70,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1139,
+          "time_spent": 0.1232,
+          "time_remaining_after": 0.4462,
+          "move": [
+            12,
+            14
+          ]
+        },
+        {
+          "move_number": 71,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1119,
+          "time_spent": 0.1133,
+          "time_remaining_after": 0.4462,
+          "move": [
+            4,
+            1
+          ]
+        },
+        {
+          "move_number": 72,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1115,
+          "time_spent": 0.1139,
+          "time_remaining_after": 0.3323,
+          "move": [
+            14,
+            2
+          ]
+        },
+        {
+          "move_number": 73,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1116,
+          "time_spent": 0.1149,
+          "time_remaining_after": 0.3313,
+          "move": [
+            3,
+            2
+          ]
+        },
+        {
+          "move_number": 74,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.1108,
+          "time_spent": 0.1244,
+          "time_remaining_after": 0.2079,
+          "move": [
+            12,
+            5
+          ]
+        },
+        {
+          "move_number": 75,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1104,
+          "time_spent": 0.1198,
+          "time_remaining_after": 0.2115,
+          "move": [
+            6,
+            10
+          ]
+        },
+        {
+          "move_number": 76,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.104,
+          "time_spent": 0.1115,
+          "time_remaining_after": 0.0964,
+          "move": [
+            11,
+            13
+          ]
+        },
+        {
+          "move_number": 77,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.1057,
+          "time_spent": 0.1117,
+          "time_remaining_after": 0.0997,
+          "move": [
+            2,
+            10
+          ]
+        },
+        {
+          "move_number": 78,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.0916,
+          "time_spent": 0.0934,
+          "time_remaining_after": 0.0031,
+          "move": [
+            0,
+            13
+          ]
+        },
+        {
+          "move_number": 79,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.0947,
+          "time_spent": 0.0974,
+          "time_remaining_after": 0.0023,
+          "move": [
+            1,
+            11
+          ]
+        },
+        {
+          "move_number": 80,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0558,
+          "time_remaining_after": 0.0,
+          "move": [
+            10,
+            14
+          ]
+        },
+        {
+          "move_number": 81,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0553,
+          "time_remaining_after": 0.0,
+          "move": [
+            13,
+            4
+          ]
+        },
+        {
+          "move_number": 82,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0574,
+          "time_remaining_after": 0.0,
+          "move": [
+            2,
+            1
+          ]
+        },
+        {
+          "move_number": 83,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0606,
+          "time_remaining_after": 0.0,
+          "move": [
+            0,
+            4
+          ]
+        },
+        {
+          "move_number": 84,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0509,
+          "time_remaining_after": 0.0,
+          "move": [
+            1,
+            2
+          ]
+        },
+        {
+          "move_number": 85,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0545,
+          "time_remaining_after": 0.0,
+          "move": [
+            10,
+            5
+          ]
+        },
+        {
+          "move_number": 86,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0542,
+          "time_remaining_after": 0.0,
+          "move": [
+            8,
+            8
+          ]
+        },
+        {
+          "move_number": 87,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0519,
+          "time_remaining_after": 0.0,
+          "move": [
+            14,
+            9
+          ]
+        },
+        {
+          "move_number": 88,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0523,
+          "time_remaining_after": 0.0,
+          "move": [
+            4,
+            8
+          ]
+        },
+        {
+          "move_number": 89,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0513,
+          "time_remaining_after": 0.0,
+          "move": [
+            5,
+            6
+          ]
+        },
+        {
+          "move_number": 90,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0513,
+          "time_remaining_after": 0.0,
+          "move": [
+            3,
+            9
+          ]
+        },
+        {
+          "move_number": 91,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.052,
+          "time_remaining_after": 0.0,
+          "move": [
+            12,
+            12
+          ]
+        },
+        {
+          "move_number": 92,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0588,
+          "time_remaining_after": 0.0,
+          "move": [
+            14,
+            0
+          ]
+        },
+        {
+          "move_number": 93,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0589,
+          "time_remaining_after": 0.0,
+          "move": [
+            3,
+            0
+          ]
+        },
+        {
+          "move_number": 94,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0524,
+          "time_remaining_after": 0.0,
+          "move": [
+            12,
+            3
+          ]
+        },
+        {
+          "move_number": 95,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0509,
+          "time_remaining_after": 0.0,
+          "move": [
+            6,
+            8
+          ]
+        },
+        {
+          "move_number": 96,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0507,
+          "time_remaining_after": 0.0,
+          "move": [
+            13,
+            11
+          ]
+        },
+        {
+          "move_number": 97,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0523,
+          "time_remaining_after": 0.0,
+          "move": [
+            7,
+            4
+          ]
+        },
+        {
+          "move_number": 98,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.051,
+          "time_remaining_after": 0.0,
+          "move": [
+            11,
+            11
+          ]
+        },
+        {
+          "move_number": 99,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0536,
+          "time_remaining_after": 0.0,
+          "move": [
+            2,
+            8
+          ]
+        },
+        {
+          "move_number": 100,
+          "player": "B",
+          "strategy": "flat",
+          "time_allocated": 0.05,
+          "time_spent": 0.0575,
+          "time_remaining_after": 0.0,
+          "move": [
+            0,
+            11
+          ]
+        },
+        {
+          "move_number": 101,
+          "player": "W",
+          "strategy": "proportional",
+          "time_allocated": 0.05,
+          "time_spent": 0.0515,
+          "time_remaining_after": 0.0,
+          "move": [
+            1,
+            9
+          ]
+        }
+      ],
+      "match_id": 1
+    }
+  ]
+}
