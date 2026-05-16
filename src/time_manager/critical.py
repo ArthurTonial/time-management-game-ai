@@ -80,7 +80,11 @@ class CriticalTimeManager(BaseTimeManager):
     # ------------------------------------------------------------------
 
     def allocate(self, time_remaining: float, move_number: int, board=None, player: str = None) -> float:
-        moves_remaining = max(1, self.estimated_total_moves - move_number)
+        if board is not None:
+            empty_cells = sum(cell == '.' for row in board.board for cell in row)
+            moves_remaining = max(1, empty_cells // 2)
+        else:
+            moves_remaining = max(1, self.estimated_total_moves - move_number)
         flat = time_remaining / moves_remaining
 
         if board is not None and player is not None and self._has_threat(board, player):

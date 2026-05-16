@@ -5,13 +5,13 @@ from .base import BaseTimeManager, _DEFAULT_ESTIMATED_MOVES
 # midgame: spend more (tactical complexity peaks)
 # endgame: spend less (fewer moves left, position is clearer)
 _PHASE_WEIGHTS = {
-    "opening": 0.6,
-    "midgame": 1.4,
-    "endgame": 0.8,
+    "opening": 0.75,
+    "midgame": 1.5,
+    "endgame": 0.75,
 }
 
-_OPENING_CUTOFF = 0.20   # first 20% of estimated moves
-_ENDGAME_CUTOFF = 0.75   # last 25% of estimated moves
+_OPENING_CUTOFF = 0.25   # first 25% of estimated moves
+_ENDGAME_CUTOFF = 0.70   # last 30% of estimated moves
 
 
 class PhaseTimeManager(BaseTimeManager):
@@ -30,8 +30,7 @@ class PhaseTimeManager(BaseTimeManager):
         self.estimated_total_moves = estimated_total_moves
         self.weights = phase_weights or _PHASE_WEIGHTS
 
-    def _phase(self, move_number: int) -> str:
-        progress = move_number / max(1, self.estimated_total_moves)
+    def _phase_from_progress(self, progress: float) -> str:
         if progress < _OPENING_CUTOFF:
             return "opening"
         elif progress < _ENDGAME_CUTOFF:
@@ -39,7 +38,14 @@ class PhaseTimeManager(BaseTimeManager):
         return "endgame"
 
     def allocate(self, time_remaining: float, move_number: int, board=None, player: str = None) -> float:
-        moves_remaining = max(1, self.estimated_total_moves - move_number)
+        if board is not None:
+            empty_cells = sum(cell == '.' for row in board.board for cell in row)
+            total_cells = board.size ** 2
+            moves_remaining = max(1, empty_cells // 2)
+            progress = 1.0 - empty_cells / total_cells
+        else:
+            moves_remaining = max(1, self.estimated_total_moves - move_number)
+            progress = move_number / max(1, self.estimated_total_moves)
         flat = time_remaining / moves_remaining
-        weight = self.weights[self._phase(move_number)]
+        weight = self.weights[self._phase_from_progress(progress)]
         return self.clamp(flat * weight, 0.05, time_remaining)
