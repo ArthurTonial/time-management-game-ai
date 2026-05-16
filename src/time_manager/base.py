@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 # Gomoku on a 15×15 board: each player makes at most ~112 moves (225 cells / 2).
 # We use a conservative estimate so we never starve late-game moves.
-_DEFAULT_ESTIMATED_MOVES = 100
+_DEFAULT_ESTIMATED_MOVES = 95
 
 class BaseTimeManager(ABC):
     """
