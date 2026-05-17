@@ -3,25 +3,32 @@ from .base import BaseTimeManager, _DEFAULT_ESTIMATED_MOVES
 
 class ProportionalTimeManager(BaseTimeManager):
     """
-    Proportional strategy: estimate moves remaining from the actual board state
-    (empty cells / 2) rather than a fixed constant.
+    Proportional strategy: uses the same calibrated denominator as FlatTimeManager
+    but scales the allocation up as the board fills.
 
-    When a board is available the denominator shrinks as pieces are placed,
-    so allocation per move grows naturally as the game progresses.  This
-    differs from FlatTimeManager, which always divides by (constant - move_number)
-    regardless of what is actually on the board.
+    The multiplier rises linearly from 0.8× at an empty board to 1.2× when the
+    board is full, so early moves are slightly conservative and late moves get
+    extra time — matching Gomoku's growing tactical complexity as pieces cluster.
+    The 0.8–1.2 range is centred on 1.0, keeping the average close to flat.
 
-    Falls back to flat behaviour when board=None.
+    allocation = (time_remaining / moves_remaining) * (0.8 + 0.4 * fill_ratio)
     """
+
+    _SCALE_MIN = 0.8   # multiplier at empty board
+    _SCALE_MAX = 1.2   # multiplier at full board
 
     def __init__(self, estimated_total_moves: int = _DEFAULT_ESTIMATED_MOVES):
         self.estimated_total_moves = estimated_total_moves
 
     def allocate(self, time_remaining: float, move_number: int, board=None, player: str = None) -> float:
+        moves_remaining = max(1, self.estimated_total_moves - move_number)
+        flat = time_remaining / moves_remaining
+
         if board is not None:
             empty_cells = sum(cell == '.' for row in board.board for cell in row)
-            moves_remaining = max(1, empty_cells // 2)
+            fill_ratio = 1.0 - empty_cells / board.size ** 2
+            multiplier = self._SCALE_MIN + (self._SCALE_MAX - self._SCALE_MIN) * fill_ratio
         else:
-            moves_remaining = max(1, self.estimated_total_moves - move_number)
-        allocation = time_remaining / moves_remaining
-        return self.clamp(allocation, 0.05, time_remaining)
+            multiplier = 1.0
+
+        return self.clamp(flat * multiplier, 0.05, time_remaining)
