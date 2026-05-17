@@ -490,10 +490,194 @@ Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca ex
 Uma limitação comum a todas as estratégias é que nenhuma delas considera o estado interno da árvore MCTS — por exemplo, a variância nas estimativas de valor dos filhos da raiz — como sinal de alocação. Abordagens que utilizam essa informação, como a proposta por \citet{huang2010time}, podem identificar posições de alta incerteza independentemente da fase ou de padrões táticos específicos. Essas abordagens estão fora do escopo deste trabalho, mas constituem uma extensão natural e são retomadas na Seção de trabalhos futuros.
 
 % -----------------------------------------------------------------------
-% CAPÍTULO 4 — Implementação (TODO)
+% CAPÍTULO 4 — Implementação
 % -----------------------------------------------------------------------
 \chapter{Implementação}
-% TODO
+\label{chap:implementation}
+
+Este capítulo descreve a implementação do sistema desenvolvido para este trabalho. A Seção~\ref{sec:impl_overview} apresenta a visão geral da arquitetura de módulos. A Seção~\ref{sec:impl_game} descreve o motor de jogo Gomoku. A Seção~\ref{sec:impl_mcts} detalha o agente MCTS. A Seção~\ref{sec:impl_timemanager} documenta a camada de gerenciamento de tempo e os parâmetros específicos de cada estratégia. A Seção~\ref{sec:impl_runner} descreve o \emph{runner} de torneio utilizado nos experimentos.
+
+% ---
+\section{Visão Geral do Sistema}
+\label{sec:impl_overview}
+
+O sistema é organizado em quatro módulos independentes que se comunicam por interfaces bem definidas. O módulo \texttt{game/gomoku} implementa as regras e a representação de estados do Gomoku. O módulo \texttt{agents/mcts} implementa o agente de busca. O módulo \texttt{time\_manager} implementa as políticas de alocação de tempo. O script \texttt{run\_duel.py} orquestra os duelos e coleta métricas.
+
+\begin{figure}[htbp]
+    \centering
+    \fbox{\rule{0pt}{4.5cm}\rule{0.75\textwidth}{0pt}}
+    \caption{Diagrama de módulos do sistema. As setas indicam dependências: \texttt{run\_duel.py} consome os três módulos inferiores; \texttt{agents/mcts} consome \texttt{game/gomoku}; \texttt{time\_manager} depende apenas de \texttt{game/gomoku} para leitura do estado do tabuleiro.}
+    \label{fig:modules}
+    \legend{Fonte: Elaborado pelo autor}
+\end{figure}
+
+A separação entre \texttt{agents/mcts} e \texttt{time\_manager} é o ponto central da arquitetura: o agente recebe apenas um prazo em segundos e desconhece qual política de tempo o gerou. Isso garante que os experimentos comparem exclusivamente o efeito da estratégia de alocação, mantendo o motor de busca idêntico em todos os duelos.
+
+% ---
+\section{Motor de Jogo}
+\label{sec:impl_game}
+
+\subsection{Tabuleiro (\texttt{Board})}
+\label{sec:impl_board}
+
+O tabuleiro é representado por uma matriz $15 \times 15$ de caracteres: \texttt{'B'} para peça preta, \texttt{'W'} para peça branca e \texttt{'.'} para célula vazia. A interface pública relevante para este trabalho compreende:
+
+\begin{itemize}
+    \item \texttt{place\_marker(player, row, col)}: registra uma peça e atualiza o atributo \texttt{last\_move = (row, col, player)}, usado pelo rollout do MCTS.
+    \item \texttt{legal\_moves()}: retorna o conjunto de todas as células vazias como tuplas \texttt{(col, row)}.
+    \item \texttt{is\_terminal\_state()}: retorna verdadeiro se algum jogador completou cinco em linha ou se o tabuleiro está completamente preenchido.
+    \item \texttt{winner()}: retorna \texttt{'B'}, \texttt{'W'} ou \texttt{None} (empate).
+\end{itemize}
+
+\subsection{Estado de Jogo (\texttt{GameState})}
+\label{sec:impl_gamestate}
+
+\texttt{GameState} encapsula um \texttt{Board} e o jogador que deve mover. Suas operações principais são \texttt{next\_state(move)}, que cria uma cópia do estado com a peça posicionada e o jogador alternado, e \texttt{get\_board()}, que expõe o tabuleiro para as políticas de tempo. Todos os estados são imutáveis do ponto de vista do MCTS: cada expansão gera um novo objeto \texttt{GameState} sem modificar o estado pai.
+
+% ---
+\section{Agente MCTS}
+\label{sec:impl_mcts}
+
+\subsection{Loop principal baseado em tempo}
+\label{sec:impl_mcts_loop}
+
+A função \texttt{mcts\_search(root\_state, time\_limit)} recebe o estado raiz e o prazo em segundos. Internamente, converte o prazo em um \emph{deadline} absoluto e executa iterações enquanto o relógio não o ultrapassa:
+
+\begin{equation}
+    \text{deadline} = t_{\text{atual}} + t_i, \qquad
+    \text{loop enquanto } t_{\text{atual}} < \text{deadline}
+\label{eq:mcts_deadline}
+\end{equation}
+
+Cada iteração aplica as quatro fases do MCTS em sequência: seleção via UCT, expansão de um filho não visitado, simulação (\emph{rollout}) e retropropagação. Ao término do prazo, o algoritmo retorna o filho da raiz com maior contagem de visitas $N(v)$.
+
+O uso do tempo como critério de parada — em vez de um número fixo de iterações — é o que torna o sistema diretamente controlável pelas políticas de tempo: cada estratégia determina $t_i$ e o MCTS realiza o máximo de iterações possível dentro desse orçamento. O número de iterações efetivamente realizadas é uma variável observada, não controlada.
+
+\subsection{Seleção e UCT}
+\label{sec:impl_uct}
+
+Durante a fase de seleção, o algoritmo desce a árvore escolhendo em cada nó o filho que maximiza o critério UCB1 (Equação~\ref{eq:ucb1}) com constante $C = \sqrt{2}$. Nós não visitados ($N(v) = 0$) são priorizados imediatamente, garantindo que todos os filhos sejam amostrados ao menos uma vez antes de qualquer seleção por UCT.
+
+\subsection{Rollout com viés de localidade}
+\label{sec:impl_rollout}
+
+O rollout simula uma partida a partir do nó expandido até um estado terminal ou até o limite de 200 movimentos. Em vez de escolher movimentos uniformemente ao acaso, o rollout adota um viés de localidade: prefere movimentos dentro de um raio $r = 5$ ao redor da última peça colocada no tabuleiro. Formalmente, dada a última peça em $(r_{\text{last}}, c_{\text{last}})$, o conjunto preferencial de movimentos é:
+
+\begin{equation}
+    A_{\text{local}} = \left\{ (x, y) \in A \;\middle|\; |y - r_{\text{last}}| \leq 5 \;\text{ e }\; |x - c_{\text{last}}| \leq 5 \right\}
+\label{eq:locality_bias}
+\end{equation}
+
+Se $A_{\text{local}} \neq \emptyset$, o rollout escolhe uniformemente em $A_{\text{local}}$; caso contrário, escolhe em $A$ inteiro. Esse viés reduz efetivamente o espaço de busca durante a simulação — movimentos distantes de qualquer peça são raramente relevantes no Gomoku — e acelera a convergência das estimativas de valor sem requerer uma função de avaliação heurística.
+
+\subsection{Retropropagação}
+\label{sec:impl_backprop}
+
+A retropropagação percorre o caminho da folha até a raiz de forma iterativa. O resultado do rollout ($1{,}0$ para vitória, $0{,}0$ para derrota, $0{,}5$ para empate) é invertido a cada nível — $\text{resultado} \leftarrow 1{,}0 - \text{resultado}$ — para refletir a alternância de perspectivas entre jogadores consecutivos na árvore.
+
+% ---
+\section{Camada de Gerenciamento de Tempo}
+\label{sec:impl_timemanager}
+
+\subsection{Interface \texttt{BaseTimeManager}}
+\label{sec:impl_base}
+
+Todas as estratégias implementam o método abstrato:
+
+\begin{center}
+\texttt{allocate(time\_remaining, move\_number, board, player) -> float}
+\end{center}
+
+O valor retornado é então limitado pelo \emph{runner} ao intervalo efetivo:
+
+\begin{equation}
+    t_i^{\text{eff}} = \max\!\bigl(0{,}05,\; \min(t_i,\; T_r \cdot 0{,}95)\bigr)
+\label{eq:clamp}
+\end{equation}
+
+O limite inferior de $0{,}05$ s garante ao menos uma iteração MCTS; o limite superior de $95\%$ do tempo restante previne que um único lance esgote o orçamento. O método \texttt{clamp} da classe base aplica o limite inferior; o limite de $95\%$ é aplicado em \texttt{run\_duel.py} após o retorno da política.
+
+\subsection{Estratégia Flat}
+\label{sec:impl_flat}
+
+A estratégia flat usa um estimador constante do número de movimentos restantes:
+
+\begin{equation}
+    \hat{N}_r = \max\!\bigl(1,\; N_{\text{const}} - i\bigr), \qquad N_{\text{const}} = 75
+\label{eq:flat_impl}
+\end{equation}
+
+onde $i$ é o número de movimentos já realizados pelo jogador. O valor $N_{\text{const}} = 75$ foi calibrado empiricamente a partir das partidas observadas: a duração média foi de $52{,}2$ lances por jogador (mediana 54, máximo observado 76). O valor 75 mantém uma margem de segurança para partidas acima da média sem supralocar orçamento nos lances iniciais.
+
+\subsection{Estratégia Proporcional}
+\label{sec:impl_proportional}
+
+A estratégia proporcional utiliza o mesmo estimador $\hat{N}_r$ da estratégia flat, mas aplica um multiplicador que escala linearmente com o preenchimento do tabuleiro:
+
+\begin{equation}
+    \rho = 1 - \frac{|\text{células vazias}|}{15^2}, \qquad
+    \mu_{\text{prop}} = 0{,}8 + 0{,}4 \cdot \rho
+\label{eq:proportional_impl}
+\end{equation}
+
+\begin{equation}
+    t_i = \mu_{\text{prop}} \cdot \frac{T_r}{\hat{N}_r}
+\end{equation}
+
+Com tabuleiro vazio ($\rho = 0$), o multiplicador vale $0{,}8$ — ligeiramente abaixo do flat. À medida que o tabuleiro enche, o multiplicador cresce linearmente até $1{,}2$ quando o tabuleiro está completamente preenchido. Como a maioria das partidas termina com preenchimento entre 20\% e 60\%, o multiplicador médio efetivo permanece próximo de $1{,}0$, mantendo o orçamento global equivalente ao flat enquanto redistribui tempo dos lances iniciais para os lances finais.
+
+\subsection{Estratégia por Fase}
+\label{sec:impl_phase}
+
+A estratégia por fase utiliza o mesmo $\hat{N}_r$ da estratégia flat e determina a fase do jogo pela fração de preenchimento do tabuleiro:
+
+\begin{equation}
+    p = 1 - \frac{|\text{células vazias}|}{15^2}
+\label{eq:fill_progress}
+\end{equation}
+
+\begin{equation}
+    \text{fase}(p) =
+    \begin{cases}
+        \text{abertura}       & \text{se } p < 0{,}10 \\
+        \text{meio do jogo}   & \text{se } 0{,}10 \leq p < 0{,}45 \\
+        \text{final}          & \text{se } p \geq 0{,}45
+    \end{cases}
+\end{equation}
+
+Os multiplicadores aplicados sobre $T_r / \hat{N}_r$ são $\mu_{\text{abertura}} = 1{,}20$, $\mu_{\text{meio}} = 1{,}50$ e $\mu_{\text{final}} = 0{,}55$. Os limiares foram calibrados empiricamente: a abertura cobre os primeiros $\approx 10\%$ de preenchimento (cerca de 12 lances por jogador), o meio do jogo estende-se até $45\%$ de preenchimento — valor próximo ao limite máximo observado na maioria das partidas — e o final cobre o restante. O multiplicador reduzido no final ($0{,}55$) compensa o orçamento extra destinado às fases anteriores, mantendo o balanço global próximo ao flat.
+
+\subsection{Estratégia Crítica}
+\label{sec:impl_critical}
+
+A estratégia crítica utiliza o mesmo $\hat{N}_r$ da estratégia flat e detecta ameaças de 4-em-linha com ao menos uma extremidade aberta para qualquer um dos dois jogadores. A detecção percorre as quatro direções (horizontal, vertical, diagonal principal, diagonal secundária) e verifica, para cada sequência de comprimento $\geq 4$, se a célula imediatamente anterior ou posterior está vazia:
+
+\begin{equation}
+    t_i =
+    \begin{cases}
+        2{,}0 \cdot \dfrac{T_r}{\hat{N}_r} & \text{se ameaça de 4-em-linha detectada} \\[6pt]
+        0{,}9 \cdot \dfrac{T_r}{\hat{N}_r} & \text{caso contrário}
+    \end{cases}
+\label{eq:critical_impl}
+\end{equation}
+
+O fator de desconto $0{,}9$ nos lances não críticos compensa o orçamento extra consumido nas posições críticas, mantendo o balanço total próximo ao da estratégia flat ao longo de uma partida típica.
+
+% ---
+\section{Runner de Torneio}
+\label{sec:impl_runner}
+
+O script \texttt{run\_duel.py} executa $N$ partidas entre dois agentes MCTS com estratégias de tempo distintas. Para controlar o viés do primeiro movimento, as cores são alternadas a cada partida: na partida par, a estratégia em avaliação joga com as peças pretas; na partida ímpar, joga com as brancas.
+
+A cada lance, o runner registra quatro métricas: tempo alocado pela política ($t_i^{\text{eff}}$), tempo efetivamente consumido pelo MCTS, tempo restante após o lance e o movimento escolhido. Ao final de todas as partidas, os resultados são serializados em JSON com três seções:
+
+\begin{itemize}
+    \item \texttt{config}: todos os parâmetros da execução (estratégias, orçamento, número de partidas), garantindo reprodutibilidade.
+    \item \texttt{summary}: taxa de vitórias agregada e por cor para cada estratégia, tempo médio alocado por lance.
+    \item \texttt{matches}: lista completa de partidas com o log de movimentos por lance.
+\end{itemize}
+
+Essa estrutura permite tanto a análise agregada de taxa de vitórias (Capítulo~\ref{chap:results}) quanto a análise temporal da distribuição de tempo ao longo das partidas.
 
 % -----------------------------------------------------------------------
 % CAPÍTULO 5 — Resultados e Análise (TODO)
