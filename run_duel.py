@@ -157,32 +157,32 @@ def run_duel(strategy, baseline, n_matches, time_budget, output_dir, color='alte
 
         strategy_played_as[strategy_color] += 1
 
-        ws = match['winner_strategy']
-        if ws == strategy:
+        winner_color = match['winner_color']
+        if winner_color is None:
+            draws += 1
+            outcome = "draw"
+        elif winner_color == strategy_color:
             strategy_wins += 1
             strategy_wins_as[strategy_color] += 1
             outcome = f"{strategy} wins"
-        elif ws == baseline:
+        else:
             baseline_wins += 1
             outcome = f"{baseline} wins"
-        else:
-            draws += 1
-            outcome = "draw"
 
         print(f"{outcome}  ({match['move_count']} moves)")
 
-    # Summary statistics
+    # Summary statistics — identify strategy/baseline moves by color role, not label
     all_strategy_times = [
         m['time_allocated']
         for r in match_results
         for m in r['moves']
-        if m['strategy'] == strategy
+        if m['player'] == r['strategy_color']
     ]
     all_baseline_times = [
         m['time_allocated']
         for r in match_results
         for m in r['moves']
-        if m['strategy'] == baseline
+        if m['player'] != r['strategy_color']
     ]
 
     summary = {
