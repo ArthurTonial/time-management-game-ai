@@ -391,11 +391,11 @@ A solução organiza-se em torno de uma separação clara entre duas responsabil
 
 Uma distinção fundamental entre as políticas propostas é o conjunto de informações que cada uma utiliza para calcular $t_i$. Do ponto de vista da observabilidade, as políticas podem ser classificadas em duas categorias:
 
-\textbf{Políticas agnósticas ao tabuleiro} (\emph{open-loop}): dependem apenas de variáveis globais da partida — tempo restante $T_r$ e número do lance $i$ — sem examinar o estado atual do tabuleiro. A estratégia uniforme (flat) e a proporcional se enquadram nessa categoria. Elas são computacionalmente triviais e determinísticas dado o histórico de tempo consumido; sua limitação é justamente a indiferença ao conteúdo posicional da partida.
+\textbf{Políticas agnósticas ao tabuleiro} (\emph{open-loop}): dependem apenas de variáveis globais da partida — tempo restante $T_r$ e número do lance $i$ — sem examinar o estado atual do tabuleiro. Apenas a estratégia uniforme (flat) se enquadra estritamente nessa categoria. Ela é computacionalmente trivial e determinística dado o histórico de tempo consumido; sua limitação é justamente a indiferença ao conteúdo posicional da partida.
 
-\textbf{Políticas sensíveis ao tabuleiro} (\emph{closed-loop}): examinam o estado atual do tabuleiro para calibrar a alocação. A estratégia por fase classifica a posição em uma das três fases do jogo; a estratégia crítica inspeciona padrões táticos específicos. Essas políticas têm potencialmente maior poder de discriminação — alocam mais tempo precisamente quando o tabuleiro indica que o lance é importante —, mas introduzem um custo de análise do estado que deve ser negligenciável em relação a $t_i$ para não distorcer o experimento.
+\textbf{Políticas sensíveis ao tabuleiro} (\emph{closed-loop}): examinam o estado atual do tabuleiro para calibrar a alocação. A estratégia proporcional lê a contagem agregada de células vazias para computar a fração de preenchimento; a estratégia por fase classifica essa fração em regiões de importância distinta; a estratégia crítica inspeciona padrões táticos específicos. Essas políticas têm potencialmente maior poder de discriminação — alocam mais tempo precisamente quando o tabuleiro indica que o lance é importante —, mas introduzem um custo de análise do estado que deve ser negligenciável em relação a $t_i$ para não distorcer o experimento.
 
-Essa taxonomia tem uma implicação experimental relevante. Qualquer diferença de desempenho entre uma política open-loop e uma closed-loop pode ser atribuída, ao menos em parte, ao uso da informação do tabuleiro como sinal de alocação. Em contraste, diferenças entre flat e proporcional — ambas open-loop — refletem apenas o efeito de recalibrar a estimativa de movimentos restantes ao longo da partida.
+Essa taxonomia tem uma implicação experimental relevante. Qualquer diferença de desempenho entre a política open-loop (flat) e as políticas closed-loop pode ser atribuída, ao menos em parte, ao uso da informação do tabuleiro como sinal de alocação. Entre as estratégias closed-loop, o grau de sofisticação da informação extraída cresce da proporcional (contagem agregada) para a por fase (classificação ordinal) e a crítica (detecção de padrões posicionais específicos).
 
 \subsection{Requisitos da interface de alocação}
 \label{sec:interface_requirements}
@@ -425,7 +425,7 @@ onde $T_r$ é o tempo restante e $\hat{N}_r$ é a estimativa do número de movim
 \subsection{Proporcional}
 \label{sec:strategy_proportional}
 
-A estratégia proporcional mantém a mesma forma da Equação~\ref{eq:flat}, mas atualiza $\hat{N}_r$ continuamente com base no progresso observado da partida. À medida que peças são colocadas no tabuleiro, a estimativa de movimentos restantes é recalculada, fazendo com que a alocação por lance aumente gradualmente ao longo da partida. A hipótese é que lances tardios — com fator de ramificação menor e posições mais definidas — se beneficiam de mais tempo, ao passo que lances de abertura, com espaço de busca enorme e pouco retorno marginal por iteração adicional, podem ser resolvidos com menos tempo.
+A estratégia proporcional mantém a mesma forma da Equação~\ref{eq:flat}, mas aplica um multiplicador que escala linearmente com o preenchimento do tabuleiro: lances iniciais, com tabuleiro esparso, recebem ligeiramente menos tempo que o flat ($0{,}8\times$), enquanto lances tardios, com o tabuleiro mais preenchido, recebem mais ($1{,}2\times$). O multiplicador cresce linearmente com o preenchimento, mantendo o orçamento global próximo ao flat em média. A hipótese é que lances tardios — com fator de ramificação menor e posições mais definidas — se beneficiam de mais tempo, ao passo que lances de abertura, com espaço de busca enorme e pouco retorno marginal por iteração adicional, podem ser resolvidos com menos tempo.
 
 \subsection{Por Fase (\emph{Phase})}
 \label{sec:strategy_phase}
@@ -460,7 +460,7 @@ A hipótese central dessa estratégia é que erros em posições com ameaça de 
 
 As quatro estratégias podem ser situadas ao longo de três dimensões: (i) a informação utilizada para calcular $t_i$; (ii) o mecanismo pelo qual redistribuem o orçamento; e (iii) o cenário de partida em que se espera que a redistribuição traga ganho.
 
-A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. As estratégias open-loop (flat e proporcional) diferem apenas no critério de estimativa de $\hat{N}_r$: o flat usa uma constante, enquanto o proporcional observa o progresso real da partida. A diferença entre elas é esperada quando a partida desvia significativamente da duração estimada. As estratégias closed-loop (por fase e crítica) usam informação do tabuleiro para modular a alocação: a fase classifica o estado em regiões de importância média distinta, enquanto a crítica reage a eventos específicos de alta importância pontual.
+A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. A estratégia flat (open-loop) usa estimador constante $\hat{N}_r$ e não consulta o tabuleiro. As estratégias closed-loop (proporcional, por fase e crítica) complementam o mesmo estimador com informação do tabuleiro em graus crescentes de sofisticação: a proporcional extrai apenas a contagem agregada de peças (fração de preenchimento), a por fase classifica o estado em regiões de importância média distinta, e a crítica reage a eventos posicionais específicos de alta importância pontual.
 
 \begin{table}[htbp]
     \centering
@@ -471,14 +471,14 @@ A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. As estratég
         \textbf{Estratégia} & \textbf{Tipo} & \textbf{Sinal utilizado} & \textbf{Cenário de ganho esperado} \\
         \hline
         Flat        & Open-loop   & Tempo restante           & Baseline; sem cenário de ganho específico \\
-        Proporcional & Open-loop  & Tempo restante + peças   & Partidas muito mais curtas ou longas que o estimado \\
+        Proporcional & Closed-loop & Fração de preenchimento  & Lances tardios com menor fator de ramificação \\
         Por Fase    & Closed-loop & Fase do jogo             & Meio do jogo denso em ameaças táticas \\
         Crítica     & Closed-loop & Ameaças de 4-em-linha    & Posições com ameaça tática imediata \\
         \hline
     \end{tabular}
 \end{table}
 
-Do ponto de vista de risco orçamentário, flat e proporcional são as mais conservadoras: nenhuma delas pode superalocar tempo em um único lance acima de $T_r / \hat{N}_r$. As estratégias por fase e crítica introduzem multiplicadores que podem, em princípio, consumir uma fração desproporcional do orçamento se ativados frequentemente — o que motiva a inclusão de fatores de desconto ($\mu < 1$) nos lances não críticos para manter o balanço orçamentário ao longo da partida.
+Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca exatamente $T_r / \hat{N}_r$ por lance. A proporcional varia entre $0{,}8$ e $1{,}2$ vezes esse valor, mantendo o orçamento global próximo ao flat em média. As estratégias por fase e crítica introduzem multiplicadores mais amplos (até $1{,}5\times$ e $2{,}0\times$, respectivamente) que podem consumir uma fração desproporcional do orçamento se ativados frequentemente — o que motiva a inclusão de fatores de desconto ($\mu < 1$) nos lances não críticos para manter o balanço orçamentário ao longo da partida.
 
 \begin{figure}[htbp]
     \centering
