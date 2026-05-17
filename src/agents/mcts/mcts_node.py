@@ -18,6 +18,7 @@ class MCTSNode:
 
         if state.player is not None:
             self.untried_actions = list(state.legal_moves())
+            random.shuffle(self.untried_actions)
         else:
             self.untried_actions = []
 
@@ -39,23 +40,22 @@ class MCTSNode:
     def best_child(self, c: float = math.sqrt(2)):
         if not self.children:
             return None
-        for child in self.children:
-            if child.visits == 0:
-                return child
 
         def ucb1(child):
-            exploit = child.wins / child.visits
+            exploit = 1.0 - child.wins / child.visits
             explore = c * math.sqrt(math.log(self.visits) / child.visits)
             return exploit + explore
 
-        return max(self.children, key=ucb1)
+        best_score = max(ucb1(child) for child in self.children)
+        tied = [child for child in self.children if ucb1(child) == best_score]
+        return random.choice(tied)
 
     # ------------------------------------------------------------------
     # Rollout
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _biased_choice(actions, state, radius: int = 2):
+    def _biased_choice(actions, state, radius: int = 5):
         """
         Prefer moves near the last placed piece.
         Falls back to a uniform random pick when the board is empty or the

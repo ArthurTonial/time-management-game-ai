@@ -1,3 +1,4 @@
+import random
 import time
 from .mcts_node import MCTSNode
 
@@ -33,9 +34,10 @@ def mcts_search(root_state, time_limit: float = 1.0) -> tuple:
 
     # Return the action of the most visited child
     if root.children:
-        best_child = max(root.children, key=lambda child: child.visits)
-        return best_child.action
+        max_visits = max(c.visits for c in root.children)
+        best = [c for c in root.children if c.visits == max_visits]
+        return random.choice(best).action
     else:
         # Fallback: return a random legal move if no children were created
         legal_moves = list(root_state.legal_moves())
-        return legal_moves[0] if legal_moves else None
+        return random.choice(legal_moves) if legal_moves else None
