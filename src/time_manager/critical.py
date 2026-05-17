@@ -29,7 +29,6 @@ class CriticalTimeManager(BaseTimeManager):
 
     @staticmethod
     def _count_in_direction(board_grid, size, row, col, dr, dc, player):
-        """Count consecutive pieces of `player` from (row, col) in direction (dr, dc)."""
         count = 0
         r, c = row, col
         while 0 <= r < size and 0 <= c < size and board_grid[r][c] == player:
@@ -38,53 +37,50 @@ class CriticalTimeManager(BaseTimeManager):
             c += dc
         return count
 
+    @staticmethod
+    def _end_is_open(grid, size, r, c):
+        return 0 <= r < size and 0 <= c < size and grid[r][c] == "."
+
+    @staticmethod
+    def _direction_has_open_threat(grid, size, r, c, dr, dc, target, length):
+        fwd = CriticalTimeManager._count_in_direction(grid, size, r, c, dr, dc, target)
+        if fwd < length:
+            return False
+        return (
+            CriticalTimeManager._end_is_open(grid, size, r + dr * fwd, c + dc * fwd)
+            or CriticalTimeManager._end_is_open(grid, size, r - dr, c - dc)
+        )
+
+    @staticmethod
+    def _target_has_threat(grid, size, target, directions, length):
+        for r in range(size):
+            for c in range(size):
+                if grid[r][c] != target:
+                    continue
+                for dr, dc in directions:
+                    if CriticalTimeManager._direction_has_open_threat(grid, size, r, c, dr, dc, target, length):
+                        return True
+        return False
+
     def _has_threat(self, board, player: str, length: int = _THREAT_LENGTH) -> bool:
-        """
-        Return True if `player` (or the opponent) has `length` pieces in a row
-        with at least one open end — i.e. a move that would win or must be blocked.
-        """
+        """Return True if player or opponent has an open threat of `length` in a row."""
         grid = board.board
         size = board.size
         directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
         opponent = "W" if player == "B" else "B"
-
-        for target in (player, opponent):
-            for r in range(size):
-                for c in range(size):
-                    if grid[r][c] != target:
-                        continue
-                    for dr, dc in directions:
-                        # count in positive direction (already on target piece)
-                        fwd = self._count_in_direction(grid, size, r, c, dr, dc, target)
-                        if fwd < length:
-                            continue
-                        # check that one end is open
-                        end_r, end_c = r + dr * fwd, c + dc * fwd
-                        start_r, start_c = r - dr, c - dc
-                        fwd_open = (
-                            0 <= end_r < size
-                            and 0 <= end_c < size
-                            and grid[end_r][end_c] == "."
-                        )
-                        back_open = (
-                            0 <= start_r < size
-                            and 0 <= start_c < size
-                            and grid[start_r][start_c] == "."
-                        )
-                        if fwd_open or back_open:
-                            return True
-        return False
+        return (
+            self._target_has_threat(grid, size, player, directions, length)
+            or self._target_has_threat(grid, size, opponent, directions, length)
+        )
 
     # ------------------------------------------------------------------
     # Allocation
     # ------------------------------------------------------------------
 
     def allocate(self, time_remaining: float, move_number: int, board=None, player: str = None) -> float:
-        if board is not None:
-            empty_cells = sum(cell == '.' for row in board.board for cell in row)
-            moves_remaining = max(1, empty_cells // 2)
-        else:
-            moves_remaining = max(1, self.estimated_total_moves - move_number)
+        # Use the same denominator as FlatTimeManager so threat multipliers are meaningful.
+        # Board is only consulted for threat detection.
+        moves_remaining = max(1, self.estimated_total_moves - move_number)
         flat = time_remaining / moves_remaining
 
         if board is not None and player is not None and self._has_threat(board, player):
