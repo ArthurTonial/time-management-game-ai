@@ -482,9 +482,10 @@ Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca ex
 
 \begin{figure}[htbp]
     \centering
-    \fbox{\rule{0pt}{5cm}\rule{0.8\textwidth}{0pt}}
+    \includegraphics[width=0.8\textwidth]{images/time_profiles}
     \caption{Perfil conceitual de tempo alocado por lance ao longo de uma partida para cada uma das quatro estratégias. A estratégia flat produz uma linha aproximadamente horizontal; a proporcional cresce suavemente; a por fase exibe um platô elevado no meio do jogo; a crítica apresenta picos nos lances em que ameaças táticas são detectadas.}
     \label{fig:time_profiles}
+    \legend{Fonte: Elaborado pelo autor}
 \end{figure}
 
 Uma limitação comum a todas as estratégias é que nenhuma delas considera o estado interno da árvore MCTS — por exemplo, a variância nas estimativas de valor dos filhos da raiz — como sinal de alocação. Abordagens que utilizam essa informação, como a proposta por \citet{huang2010time}, podem identificar posições de alta incerteza independentemente da fase ou de padrões táticos específicos. Essas abordagens estão fora do escopo deste trabalho, mas constituem uma extensão natural e são retomadas na Seção de trabalhos futuros.
@@ -501,11 +502,11 @@ Este capítulo descreve a implementação do sistema desenvolvido para este trab
 \section{Visão Geral do Sistema}
 \label{sec:impl_overview}
 
-O sistema é organizado em quatro módulos independentes que se comunicam por interfaces bem definidas. O módulo \texttt{game/gomoku} implementa as regras e a representação de estados do Gomoku. O módulo \texttt{agents/mcts} implementa o agente de busca. O módulo \texttt{time\_manager} implementa as políticas de alocação de tempo. O script \texttt{run\_duel.py} orquestra os duelos e coleta métricas.
+O sistema é organizado em quatro módulos independentes que se comunicam por interfaces bem definidas. O módulo \texttt{game/gomoku} implementa as regras e a representação de estados do Gomoku. O módulo \texttt{agents/mcts} implementa o agente de busca. O módulo \texttt{time\_manager} implementa as políticas de alocação de tempo. Um script \texttt{run\_duel.py} orquestra os duelos e coleta métricas. A estrutura de diretórios \texttt{game/} e \texttt{agents/} foi concebida de forma extensível: novos domínios de jogo ou novos agentes de busca podem ser integrados sem alterações na camada de gerenciamento de tempo ou no runner, embora neste trabalho apenas Gomoku e MCTS sejam instanciados.
 
 \begin{figure}[htbp]
     \centering
-    \fbox{\rule{0pt}{4.5cm}\rule{0.75\textwidth}{0pt}}
+    \includegraphics[width=0.8\textwidth]{images/modules_diagram.png}
     \caption{Diagrama de módulos do sistema. As setas indicam dependências: \texttt{run\_duel.py} consome os três módulos inferiores; \texttt{agents/mcts} consome \texttt{game/gomoku}; \texttt{time\_manager} depende apenas de \texttt{game/gomoku} para leitura do estado do tabuleiro.}
     \label{fig:modules}
     \legend{Fonte: Elaborado pelo autor}
@@ -680,10 +681,145 @@ A cada lance, o runner registra quatro métricas: tempo alocado pela política (
 Essa estrutura permite tanto a análise agregada de taxa de vitórias (Capítulo~\ref{chap:results}) quanto a análise temporal da distribuição de tempo ao longo das partidas.
 
 % -----------------------------------------------------------------------
-% CAPÍTULO 5 — Resultados e Análise (TODO)
+% CAPÍTULO 5 — Resultados e Análise
 % -----------------------------------------------------------------------
 \chapter{Resultados e Análise}
-% TODO
+\label{chap:results}
+
+Este capítulo apresenta e analisa os resultados dos experimentos de torneio descritos na Seção~\ref{sec:impl_runner}. A Seção~\ref{sec:exp_setup} descreve a configuração experimental e a metodologia estatística adotada. A Seção~\ref{sec:results_overview} apresenta uma visão geral dos resultados. A Seção~\ref{sec:results_per_strategy} analisa cada estratégia individualmente. A Seção~\ref{sec:results_discussion} discute os achados em conjunto e os situa no contexto das hipóteses propostas no Capítulo~\ref{chap:proposal}.
+
+% ---
+\section{Configuração Experimental}
+\label{sec:exp_setup}
+
+Cada estratégia foi avaliada em um torneio de $N = 400$ partidas contra o baseline flat, com orçamento de 60 segundos por jogador por partida. Para controlar o viés do primeiro movimento — Black possui vantagem estrutural em Gomoku, conforme discutido na Seção~\ref{sec:gomoku_rules} — as 400 partidas foram divididas igualmente entre as duas cores: 200 partidas com a estratégia em avaliação jogando como Black e 200 como White.
+
+\textbf{Metodologia estatística.} O resultado de cada partida é modelado como uma variável de Bernoulli: vitória (1) ou derrota (0). Para cada estratégia, estimou-se a taxa de vitórias $\hat{p} = w / N$ e construiu-se um intervalo de confiança de 95\% pela aproximação normal:
+
+\begin{equation}
+    \text{IC}_{95\%} = \hat{p} \pm 1{,}96 \sqrt{\frac{\hat{p}(1-\hat{p})}{N}}
+\label{eq:ci}
+\end{equation}
+
+A hipótese nula $H_0\colon p = 0{,}5$ — a estratégia tem a mesma taxa de vitórias que o baseline — foi testada pelo escore $z$:
+
+\begin{equation}
+    z = \frac{\hat{p} - 0{,}5}{\sqrt{0{,}25/N}}
+\label{eq:ztest}
+\end{equation}
+
+Não foram observados empates em nenhuma das 1200 partidas realizadas, o que é consistente com a propriedade do Gomoku de que o jogo ótimo resulta sempre em vitória do primeiro jogador \cite{allis1994searching}.
+
+% ---
+\section{Visão Geral dos Resultados}
+\label{sec:results_overview}
+
+A Tabela~\ref{tab:results_main} apresenta as taxas de vitórias de cada estratégia, desagregadas por cor e no total, com os respectivos intervalos de confiança e estatísticas de teste.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Taxas de vitórias das estratégias contra o baseline flat ($N = 400$ partidas por estratégia, 200 por cor). IC: intervalo de confiança de 95\%. Significância: *** $p < 0{,}001$, ** $p < 0{,}01$, n.s.\ não significativo.}
+    \label{tab:results_main}
+    \begin{tabular}{llrrrlr}
+        \hline
+        \textbf{Estratégia} & \textbf{Cor} & \textbf{Vitórias} & \textbf{Partidas} & \textbf{Taxa} & \textbf{IC 95\%} & \textbf{Sig.} \\
+        \hline
+        Crítica      & Black & 123 & 200 & 61,5\% & [54,8\%; 68,2\%] & **  \\
+                     & White & 124 & 200 & 62,0\% & [55,3\%; 68,7\%] & *** \\
+                     & Total & 247 & 400 & \textbf{61,8\%} & [57,0\%; 66,5\%] & *** \\
+        \hline
+        Por Fase     & Black &  89 & 200 & 44,5\% & [37,6\%; 51,4\%] & n.s.\\
+                     & White &  72 & 200 & 36,0\% & [29,3\%; 42,7\%] & *** \\
+                     & Total & 161 & 400 & \textbf{40,2\%} & [35,4\%; 45,1\%] & *** \\
+        \hline
+        Proporcional & Black & 103 & 200 & 51,5\% & [44,6\%; 58,4\%] & n.s.\\
+                     & White & 106 & 200 & 53,0\% & [46,1\%; 59,9\%] & n.s.\\
+                     & Total & 209 & 400 & \textbf{52,2\%} & [47,4\%; 57,1\%] & n.s.\\
+        \hline
+    \end{tabular}
+\end{table}
+
+Os resultados dividem-se em três categorias distintas: a estratégia crítica supera significativamente o baseline; a estratégia por fase é significativamente inferior; e a estratégia proporcional é indistinguível do baseline. A Figura~\ref{fig:results_winrates} ilustra essa comparação visualmente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/results_winrates}
+    \caption{Taxas de vitórias por estratégia e cor, com intervalos de confiança de 95\%. A linha tracejada em 50\% indica o nível do baseline flat. A estratégia crítica supera consistentemente o baseline em ambas as cores; a por fase fica consistentemente abaixo; a proporcional mantém-se próxima de 50\%.}
+    \label{fig:results_winrates}
+    \legend{Fonte: Elaborado pelo autor}
+\end{figure}
+
+% ---
+\section{Análise por Estratégia}
+\label{sec:results_per_strategy}
+
+\subsection{Estratégia Crítica}
+\label{sec:results_critical}
+
+A estratégia crítica obteve 61,8\% de vitórias no total ($z = +4{,}70$, $p < 0{,}001$), resultado altamente significativo. O achado mais notável é a \textbf{simetria entre cores}: 61,5\% como Black e 62,0\% como White, uma diferença de apenas 0,5 pontos percentuais. Em Gomoku, White possui uma desvantagem estrutural que tipicamente resulta em taxas de vitória próximas a 40\% contra um oponente de força equivalente. O fato de a estratégia crítica obter 62\% como White — jogando contra a estratégia flat como Black — indica que a detecção de ameaças é capaz de reverter completamente essa desvantagem.
+
+A análise da distribuição de tempo revela que a estratégia crítica gastou em média 0,878 s/lance, contra 0,796 s/lance do flat — uma diferença de aproximadamente 10\%. Esse acréscimo não é uniforme: ameaças táticas foram detectadas em \textbf{16,4\% dos lances} (aproximadamente 1 em cada 6), nos quais o tempo alocado dobrou para cerca de 1,6 s, enquanto os demais lances receberam $0{,}9\times$ da alocação flat. O sinal de detecção de ameaças é, portanto, esparso mas de alta precisão: identifica exatamente os lances em que um erro é imediatamente fatal e concentra recursos neles.
+
+Esse resultado valida a hipótese central da estratégia crítica (Seção~\ref{sec:strategy_critical}): erros em posições com ameaça de 4-em-linha aberta têm custo irreparável, e investir tempo adicional nesses lances — ainda que em apenas 16\% dos casos — eleva significativamente a taxa de vitórias.
+
+\subsection{Estratégia por Fase}
+\label{sec:results_phase}
+
+A estratégia por fase obteve 40,2\% de vitórias no total ($z = -3{,}90$, $p < 0{,}001$), sendo significativamente \emph{inferior} ao baseline. O resultado é paradoxal à primeira vista: a estratégia por fase gastou em média 0,900 s/lance — 13\% a mais que o flat — e ainda assim obteve menor taxa de vitórias. O problema está na distribuição temporal, não no volume total.
+
+A Tabela~\ref{tab:phase_time} mostra a alocação média por faixa de lances do jogador para a estratégia por fase e para o flat.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Tempo médio alocado por faixa de lance do jogador: estratégia por fase vs.\ flat (partidas como Black, $n = 200$).}
+    \label{tab:phase_time}
+    \begin{tabular}{lrrr}
+        \hline
+        \textbf{Lances do jogador} & \textbf{Por Fase} & \textbf{Flat} & \textbf{Diferença} \\
+        \hline
+        0--10   (abertura)         & 0,946 s & 0,799 s & $+18\%$ \\
+        11--25  (meio do jogo)     & 1,081 s & 0,797 s & $+36\%$ \\
+        26--40  (meio/final)       & 0,938 s & 0,795 s & $+18\%$ \\
+        41+     (final)            & 0,578 s & 0,791 s & $-27\%$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+O orçamento é gasto em excesso na abertura e no meio do jogo — fase em que o multiplicador de 1,5$\times$ eleva o gasto por lance em 36\% acima do flat — esgotando as reservas disponíveis para os lances finais. Quando o tabuleiro atinge o limiar de final ($p \geq 0{,}45$), dois efeitos negativos se combinam: (i) o orçamento residual já está reduzido pelo excesso de gastos anteriores, e (ii) o multiplicador de final ($\mu = 0{,}55$) desconta adicionalmente esse orçamento já reduzido. O resultado é que os lances 41+, onde as partidas costumam ser decididas, recebem 27\% menos tempo que o flat.
+
+A assimetria entre as cores reforça essa interpretação. White joga os lances de resposta em posições com tabuleiro mais preenchido, justamente quando o desconto de final está ativo. Isso explica a queda da taxa de vitórias de 44,5\% como Black para 36,0\% como White.
+
+O resultado aponta uma limitação de design: a hipótese motivadora da estratégia por fase — que o meio do jogo concentra as decisões mais consequentes — é plausível, mas o desconto de final de 0,55$\times$ acaba penalizando os lances decisivos em vez de preservar orçamento para eles. Um refinamento natural seria reduzir esse desconto ou substituir o limiar fixo de preenchimento pelo número de lances restantes estimados, desacoplando a classificação de fase do ritmo real de cada partida.
+
+\subsection{Estratégia Proporcional}
+\label{sec:results_proportional}
+
+A estratégia proporcional obteve 52,2\% de vitórias no total ($z = +0{,}90$, $p = 0{,}37$), resultado estatisticamente indistinguível do baseline com 400 partidas. A análise temporal revela que a estratégia proporcional gastou sistematicamente \textbf{menos} tempo que o flat: 0,758 s/lance contra 0,796 s/lance, uma redução de aproximadamente 5\%.
+
+Essa subalocação ocorre porque a maioria dos lances se concentra nas fases iniciais da partida, quando o preenchimento do tabuleiro $\rho$ ainda é baixo. Com $\rho$ tipicamente entre 0\% e 30\% durante a maior parte da partida, o multiplicador $\mu = 0{,}8 + 0{,}4\rho$ oscila entre 0,80 e 0,92 — sistematicamente abaixo de 1,0. O acréscimo esperado nos lances finais ($\mu \to 1{,}2$) é parcialmente compensado pela redução do orçamento residual nesses lances.
+
+A redistribuição de tempo é, portanto, mais tênue na prática do que na intenção de projeto, e seus efeitos não são detectáveis com 400 partidas. O resultado é neutro: a estratégia proporcional não prejudica nem beneficia o desempenho em relação ao flat.
+
+% ---
+\section{Discussão}
+\label{sec:results_discussion}
+
+\subsection{Síntese comparativa}
+\label{sec:discussion_synthesis}
+
+Os três resultados formam um padrão coerente à luz das hipóteses do Capítulo~\ref{chap:proposal}. A estratégia com sinal de maior especificidade — a crítica, que detecta padrões posicionais concretos — é a única que produz ganho mensurável. A estratégia com sinal de especificidade intermediária — a por fase, que classifica o estado em regiões ordinais de importância — produz redistribuição de tempo mas com efeito adverso por conta da miscalibração do desconto de final. A estratégia com sinal mais fraco — a proporcional, com contagem agregada de peças — é neutra.
+
+Esse gradiente sugere que, neste domínio e com este orçamento de tempo, \textbf{a qualidade do sinal de alocação importa mais do que o volume total de tempo redistribuído}. A estratégia crítica usa um sinal binário aplicado a apenas 16\% dos lances — mecanismo simples, mas altamente informativo. A estratégia por fase distribui o orçamento de forma mais contínua mas com menor acurácia na identificação dos lances decisivos.
+
+\subsection{O efeito da cor na estratégia crítica}
+\label{sec:discussion_color}
+
+A simetria observada na estratégia crítica — 61,5\% como Black e 62,0\% como White — merece atenção específica. Ao anular a desvantagem estrutural de White, a estratégia crítica demonstra que a vantagem do primeiro movimento em Gomoku pode ser contrabalançada por uma política de alocação de tempo mais precisa. White, que tipicamente precisa reagir à iniciativa de Black, se beneficia proporcionalmente da detecção de ameaças: bloquear uma sequência de 4-em-linha no tempo correto é, para White, frequentemente a única forma de não perder no lance seguinte.
+
+\subsection{Limitações}
+\label{sec:discussion_limitations}
+
+Os experimentos apresentam algumas limitações que devem ser consideradas na interpretação dos resultados. Primeiro, o único baseline utilizado foi a estratégia flat; comparações diretas entre as estratégias propostas não foram realizadas, o que impede afirmações sobre ordenação relativa entre elas. Segundo, todos os experimentos utilizaram um único orçamento de 60 segundos por jogador; resultados podem diferir com orçamentos distintos, particularmente para a estratégia crítica, cujo ganho depende da frequência de ameaças detectadas. Terceiro, ambos os agentes utilizam o mesmo motor MCTS; contra agentes com capacidades de busca diferentes, os efeitos das estratégias de tempo podem variar. Por fim, os resultados são específicos ao Gomoku; domínios com estrutura tática distinta podem apresentar padrões diferentes de resposta às estratégias de alocação. Uma direção natural de trabalho futuro é estender o sistema a outros jogos de tabuleiro — como Go ou Hex — e a outros agentes de busca, explorando se o ganho da estratégia crítica se generaliza para domínios com padrões táticos diferentes, e se a arquitetura extensível proposta facilita essa comparação.
 
 % -----------------------------------------------------------------------
 % CAPÍTULO 6 — Conclusão (TODO)
