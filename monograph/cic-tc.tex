@@ -127,7 +127,55 @@ Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 % CAPÍTULO 1 — Introdução
 % -----------------------------------------------------------------------
 \chapter{Introdução}
-% TODO
+
+A Inteligência Artificial tem avançado de forma expressiva nas últimas décadas, permeando domínios que vão da medicina ao planejamento logístico. Um dos ambientes que mais contribuiu para o desenvolvimento dessa área são os jogos: sua estrutura formal e adversarial oferece um laboratório controlado no qual algoritmos podem ser avaliados de forma rigorosa e comparável. Este trabalho insere-se nessa tradição, investigando um aspecto específico e pouco explorado de agentes automáticos para jogos: a distribuição inteligente do orçamento de tempo entre os movimentos de uma partida.
+
+% ---
+\section{Inteligência Artificial em Jogos}
+\label{sec:intro_games}
+
+Jogos de tabuleiro constituem um \textit{benchmark} clássico para agentes de IA desde as primeiras décadas da área. \citet{shannon1950programming} foi pioneiro ao analisar formalmente o problema de jogar xadrez por computador, estabelecendo os fundamentos teóricos que viriam a embasar décadas de pesquisa. A representação de uma partida como uma árvore de estados — com alternância de movimentos entre dois adversários — é a estrutura central de toda essa linha de trabalho.
+
+O algoritmo Minimax e suas extensões (Seção~\ref{sec:minimax}) formalizaram essa estrutura e, combinados com funções de avaliação heurísticas cuidadosamente elaboradas, permitiram que programas de Xadrez atingissem nível grandmestre. Com o surgimento do Monte Carlo Tree Search (MCTS) \cite{coulom2006efficient,kocsis2006bandit}, porém, abriu-se uma nova fronteira: ao estimar o valor de posições por simulação estatística em vez de busca exaustiva, o MCTS dispensou a necessidade de funções de avaliação explícitas e demonstrou saltos de desempenho expressivos em jogos de alta complexidade, como o Go \cite{gelly2006modification}. Esse avanço culminou em marcos históricos como o AlphaGo e o AlphaZero, que combinaram MCTS com aprendizado profundo para superar os melhores jogadores humanos em Go e Xadrez.
+
+Este trabalho foca exclusivamente em agentes baseados em MCTS sem aprendizado de máquina. O objetivo é estudar o comportamento do algoritmo em condições de tempo limitado — um problema que permanece relevante e aberto independentemente das capacidades de redes neurais.
+
+% ---
+\section{Motivação e Justificativa}
+\label{sec:motivation}
+
+O MCTS foi amplamente estudado sob diferentes ângulos: a formulação do critério de seleção UCT \cite{kocsis2006bandit}, variantes de expansão e rollout, e aplicações a domínios além dos jogos \cite{browne2012survey}. Uma dimensão prática, porém, recebeu atenção comparativamente limitada: o \emph{gerenciamento de tempo por lance}.
+
+Em partidas competitivas, o orçamento de tempo total por jogador é fixo e deve ser distribuído entre todos os lances da partida. Como o MCTS é um algoritmo \emph{anytime} — pode ser interrompido a qualquer momento e retorna o melhor movimento encontrado até então — o tempo disponível por turno é o recurso natural de controle: mais tempo implica mais iterações, estimativas mais precisas e decisões de maior qualidade. A questão que se coloca é como distribuir esse orçamento de forma eficaz ao longo de uma partida.
+
+A estratégia mais simples — dividir o tempo restante igualmente entre os movimentos estimados — é também a mais comum na prática \cite{browne2012survey}. Ela ignora, porém, que nem todos os lances têm a mesma importância: posições com ameaças táticas imediatas são fatais se mal respondidas, enquanto lances de abertura com tabuleiro esparso tendem a ter consequências mais difusas. Investir tempo adicional nos momentos críticos e economizar nos demais poderia, em teoria, aumentar a qualidade agregada das decisões sem alterar o orçamento total. Essa lacuna motiva o presente trabalho.
+
+% ---
+\section{Objetivos}
+\label{sec:objectives}
+
+\textbf{Objetivo geral}: Comparar estratégias de alocação de tempo por lance em agentes MCTS aplicados ao Gomoku e quantificar o impacto de cada abordagem na taxa de vitórias.
+
+\textbf{Objetivos específicos}:
+
+\begin{itemize}
+    \item Implementar quatro variantes de alocação de tempo (uniforme, proporcional, por fase e crítica) sobre um agente MCTS comum;
+    \item Desenvolver uma infraestrutura de torneio controlada para coleta sistemática de dados;
+    \item Medir o impacto de cada estratégia em duelos com condições controladas — orçamento fixo, alternância de cores e número de partidas suficiente para inferência estatística;
+    \item Analisar os trade-offs e limitações de cada abordagem à luz dos resultados obtidos.
+\end{itemize}
+
+% ---
+\section{Hipótese}
+\label{sec:hypothesis}
+
+A hipótese central é que estratégias de alocação sensíveis ao estado do jogo — em particular, aquelas capazes de identificar momentos táticos críticos — superam a alocação uniforme em taxa de vitórias. A motivação é direta: se o valor marginal de uma iteração adicional do MCTS é maior em posições de alta importância tática, redistribuir tempo para esses momentos deve aumentar a qualidade agregada das decisões sem alterar o orçamento total.
+
+% ---
+\section{Organização do Trabalho}
+\label{sec:organization}
+
+O restante deste trabalho está organizado da seguinte forma. O Capítulo~\ref{chap:background} apresenta os conceitos fundamentais: busca em árvores de jogo, o algoritmo MCTS, estratégias de gerenciamento de tempo identificadas na literatura e as propriedades do jogo Gomoku. O Capítulo~\ref{chap:proposal} formaliza o problema de alocação de tempo, descreve a arquitetura conceitual da solução e apresenta as quatro estratégias propostas. O Capítulo~\ref{chap:implementation} detalha a implementação do sistema. O Capítulo~\ref{chap:results} apresenta os resultados experimentais e sua análise. Por fim, o Capítulo~6 sintetiza as conclusões do trabalho e aponta direções para pesquisa futura.
 
 % -----------------------------------------------------------------------
 % CAPÍTULO 2 — Fundamentação Teórica
