@@ -204,19 +204,50 @@
 
 ---
 
+## 6. Conclusão
+
+Texto corrido, sem subdivisões, ~2 páginas.
+
+### Página 1 — Considerações Finais
+
+1. Retomar o problema: MCTS é anytime, budget é finito — como distribuir o tempo?
+2. O que foi feito: quatro estratégias implementadas, torneio de 400 partidas por estratégia vs. flat, Gomoku 15×15, 60s/jogador.
+3. Resultados: crítica (+11,8 pp, p<0,001) confirma a hipótese; por fase (−9,8 pp) mostra que sinal mal calibrado é pior que flat; proporcional é neutro. Achado central: **qualidade do sinal importa mais que volume redistribuído**.
+4. Hipótese confirmada parcialmente — vale para sinal específico (crítica), não para sinal agregado.
+
+### Página 2 — Trabalhos Futuros
+
+1. Refinar a estratégia por fase (reduzir desconto de final; usar lances restantes estimados em vez de preenchimento fixo).
+2. Estender a crítica para outros padrões táticos (duplo-três, ameaças compostas).
+3. Testar outros orçamentos de tempo e outros jogos/agentes via arquitetura extensível.
+4. Direção mais ambiciosa: usar variância interna da árvore MCTS como sinal de alocação (Huang et al., 2010) ou aprendizado por reforço.
+
+---
+
 ## 1. Introdução
 
-### 1.1 Contextualização
+~4–5 páginas. Texto corrido com subdivisões curtas. **Escrever por último** (após cap. 2–5 prontos).
 
-- Jogos de tabuleiro como ambiente clássico de pesquisa em IA
-- MCTS e seu papel central em agentes modernos (referência ao AlphaGo/AlphaZero)
-- O problema de gerenciamento de recursos computacionais em tempo real
+> **Contexto para escrita**: o leitor ainda não conhece o trabalho. O objetivo é conduzi-lo de IA geral → IA em jogos → MCTS → problema de tempo → este trabalho. Não mencionar IA generativa nem LLMs. Os resultados já são conhecidos ao escrever — usá-los para tornar a motivação mais concreta.
 
-### 1.2 Motivação
+### Abertura (sem título, ~0,5 página)
 
-- MCTS é anytime: mais tempo = melhor qualidade, mas o budget por partida é fixo
-- A questão: *como distribuir o tempo fixo entre os movimentos de forma ótima?*
-- Estratégias ingênuas ignoram que alguns momentos do jogo são mais críticos que outros
+- Situar IA no contexto atual de forma ampla, criando um "norte" antes de entrar em jogos
+- Transição natural para o nicho: IA aplicada a jogos de tabuleiro como benchmark clássico
+
+### 1.1 Inteligência Artificial em Jogos (~1 página)
+
+- Jogos de tabuleiro como ambiente ideal de pesquisa: estado bem definido, regras claras, adversário controlado
+- Marco histórico: Deep Blue (Xadrez) → AlphaGo/AlphaZero (Go) → MCTS como algoritmo central nos agentes modernos
+- Escopo restrito: agentes baseados em busca, não aprendizado profundo
+- Referência: Browne et al. (2012) como survey base do MCTS
+
+### 1.2 Motivação e Justificativa (~1–1,5 página)
+
+- O que existe: MCTS amplamente estudado em seleção (UCT), rollout, expansão, variantes
+- O que falta: gerenciamento de tempo por lance — pouco explorado; maioria das implementações usa alocação uniforme (Browne et al., 2012)
+- A questão central: MCTS é *anytime* — mais tempo implica melhor qualidade — mas o budget por partida é fixo e nem todos os lances têm a mesma importância
+- Esta lacuna é a motivação direta do trabalho; os objetivos decorrem dela
 
 ### 1.3 Objetivos
 
@@ -224,49 +255,20 @@
 
 **Específicos**:
 
-- Implementar variantes de alocação (flat, proporcional, por fase, crítica)
+- Implementar quatro variantes de alocação (flat, proporcional, por fase, crítica)
 - Desenvolver infraestrutura de torneio para coleta de dados controlada
 - Medir o impacto de cada estratégia via duelos com condições controladas
 - Analisar trade-offs e limitações de cada abordagem
 
 ### 1.4 Hipótese
 
-- Alocação inteligente (phase/critical) supera a baseline flat em taxa de vitórias
+- Alocação inteligente supera o baseline flat em taxa de vitórias quando o sinal de detecção é suficientemente específico
+- Complementar (à luz dos resultados): qualidade do sinal importa mais do que volume redistribuído
 
 ### 1.5 Organização do Trabalho
 
-- Breve descrição dos capítulos (escrever por último, após tudo pronto)
-
----
-
-## 6. Conclusão
-
-### 6.1 Síntese dos Resultados
-
-- Qual estratégia obteve melhor desempenho e com qual magnitude
-
-### 6.2 Resposta à Hipótese
-
-- A hipótese foi confirmada, refutada ou inconclusiva? Com que grau de confiança?
-
-### 6.3 Contribuições
-
-- Infraestrutura de torneio reusável para comparar agentes MCTS
-- Framework extensível de time managers via `BaseTimeManager`
-- Dados empíricos sobre o impacto de time management no Gomoku
-
-### 6.4 Limitações
-
-- Rollout não treinado (random com viés local) — MCTS mais forte poderia reagir diferente
-- Apenas Gomoku — generalização não testada
-- Detecção de criticidade limitada a 4-em-linha (padrões sutis ignorados)
-
-### 6.5 Trabalhos Futuros
-
-- Neural network policy para rollout (estilo AlphaZero)
-- Detecção de criticidade mais sofisticada (VCT, padrões 3×3)
-- Generalização para outros jogos (Othello, Go)
-- Adaptive time manager que aprende a distribuição ótima via self-play
+- Escrever por último, após todos os capítulos prontos
+- ~2 frases por capítulo descrevendo o conteúdo
 
 ---
 
