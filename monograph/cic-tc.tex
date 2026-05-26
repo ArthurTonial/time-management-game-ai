@@ -135,18 +135,17 @@ Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 \chapter{Fundamentação Teórica}
 \label{chap:background}
 
-Este capítulo apresenta os conceitos necessários para a compreensão do trabalho. A Seção~\ref{sec:minimax} introduz o algoritmo Minimax e suas extensões clássicas para jogos de dois jogadores. A Seção~\ref{sec:mcts} descreve o Monte Carlo Tree Search, algoritmo sobre o qual este trabalho se apoia. A Seção~\ref{sec:timemanagement} discute o problema de gerenciamento de tempo em jogos e as estratégias de alocação propostas na literatura. Por fim, a Seção~\ref{sec:gomoku} apresenta o jogo Gomoku e suas propriedades relevantes para o contexto deste trabalho.
+Este capítulo apresenta os conceitos necessários para a compreensão do trabalho. A Seção~\ref{sec:minimax} introduz o problema de busca em árvores de jogo e o algoritmo Minimax como abordagem clássica, estabelecendo a base conceitual sobre a qual o MCTS se apoia. A Seção~\ref{sec:mcts} descreve o Monte Carlo Tree Search, algoritmo central deste trabalho. A Seção~\ref{sec:timemanagement} discute o problema de gerenciamento de tempo em jogos e as estratégias de alocação propostas na literatura. Por fim, a Seção~\ref{sec:gomoku} apresenta o jogo Gomoku e suas propriedades relevantes para o contexto deste trabalho.
 
 % ---
-\section{Minimax e Busca em Jogos}
+\section{Busca em Árvores de Jogo}
 \label{sec:minimax}
+
+A busca em árvores de jogo é o paradigma central dos agentes automáticos para jogos de dois jogadores com informação perfeita. Esta seção apresenta o problema na sua formulação clássica — o algoritmo Minimax e sua principal otimização, a poda alfa-beta — que constituem a fundação histórica da área e o ponto de partida conceitual para compreender as motivações do MCTS. A limitação fundamental dessas abordagens em domínios de alta complexidade, discutida na Seção~\ref{sec:minimax_limits}, é precisamente o que motivou o desenvolvimento do MCTS como alternativa baseada em simulação.
 
 Jogos de dois jogadores com informação perfeita e soma zero constituem um dos domínios mais estudados em Inteligência Artificial. Nesse modelo, dois agentes se alternam realizando movimentos em um estado compartilhado; o ganho de um implica a perda equivalente do outro. Xadrez, damas, Go e Gomoku são exemplos canônicos. A representação natural de uma partida é uma \emph{árvore de jogo}: cada nó corresponde a um estado e cada aresta a um movimento legal, com folhas representando estados terminais cujo valor é determinado pelo resultado da partida.
 
-\subsection{O algoritmo Minimax}
-\label{sec:minimax_alg}
-
-O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore em profundidade, atribuindo a cada nó um valor que reflete o melhor resultado possível sob jogo ótimo de ambos os lados. O jogador maximizador (\emph{MAX}) escolhe o movimento de maior valor; o minimizador (\emph{MIN}) escolhe o de menor. O valor de um nó é definido recursivamente:
+O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore recursivamente, atribuindo a cada nó o melhor resultado possível sob jogo ótimo de ambos os lados. O jogador maximizador (\emph{MAX}) escolhe o movimento de maior valor; o minimizador (\emph{MIN}), o de menor:
 
 \begin{equation}
     V(n) =
@@ -163,22 +162,14 @@ O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore em profun
     \caption{Exemplo de árvore Minimax com dois níveis de profundidade. Nós quadrados representam o jogador MAX; nós circulares, o jogador MIN. Os valores das folhas são propagados de baixo para cima.}
     \label{fig:minimax_tree}
         \legend{Fonte: Elaborado pelo autor}
-
 \end{figure}
 
-Para jogos com espaço de busca finito, o Minimax é teoricamente ótimo: garante o melhor resultado possível contra um oponente perfeito. Na prática, porém, a busca exaustiva é inviável para jogos com fator de ramificação elevado. O Xadrez possui fator de ramificação médio de aproximadamente 35 e profundidade média de partida de 80 lances, resultando em uma árvore com $35^{80}$ folhas — muito além da capacidade computacional disponível \cite{shannon1950programming}. Para contornar esse problema, a busca é limitada a uma profundidade predefinida, e os nós não terminais são avaliados por uma função heurística $h(n)$ que estima a utilidade do estado.
-
-\subsection{Poda Alfa-Beta}
-\label{sec:alpha_beta}
-
-A poda alfa-beta \cite{knuth1975analysis} é a otimização mais relevante do Minimax. Ela mantém dois valores ao longo da busca: $\alpha$, o melhor resultado garantido para MAX nos ancestrais do nó atual, e $\beta$, o melhor resultado garantido para MIN. Sempre que $\alpha \geq \beta$ em um nó, os ramos restantes desse nó são descartados (\emph{podados}), pois não podem influenciar a decisão do ancestral.
-
-No melhor caso, com os movimentos ordenados de forma ótima, a poda alfa-beta reduz a complexidade de $O(b^d)$ para $O(b^{d/2})$, efetivamente dobrando a profundidade de busca alcançável \cite{russell2016artificial}. Na prática, a ordem dos movimentos não é ótima, e o ganho situa-se entre os dois extremos. Ainda assim, a poda alfa-beta permitiu que programas de Xadrez atingissem níveis sobre-humanos de jogo combinada com funções de avaliação cuidadosamente elaboradas.
+Para jogos finitos, o Minimax é teoricamente ótimo, mas a busca exaustiva é inviável para fator de ramificação elevado — o Xadrez, por exemplo, possui fator médio de 35 e duração de 80 lances, produzindo $35^{80}$ folhas \cite{shannon1950programming}. Na prática, a busca é limitada a uma profundidade predefinida e os nós não terminais são avaliados por uma função heurística $h(n)$. A principal otimização é a poda alfa-beta \cite{knuth1975analysis}, que mantém dois limitantes $\alpha$ (melhor para MAX) e $\beta$ (melhor para MIN) e descarta ramos que não podem influenciar a decisão da raiz. No melhor caso, reduz a complexidade de $O(b^d)$ para $O(b^{d/2})$, efetivamente dobrando a profundidade alcançável (Figura~\ref{fig:alpha_beta}).
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{images/alfabeta_pruning.png}
-    \caption{Ilustração da poda alfa-beta sobre uma árvore Minimax. Os ramos marcados em cinza, com um $X$ vermelho na frente, são podados por não poderem influenciar a decisão da raiz, dado os limites $\alpha$ e $\beta$ já estabelecidos.}
+    \caption{Ilustração da poda alfa-beta sobre uma árvore Minimax. Os ramos marcados em cinza são podados por não poderem influenciar a decisão da raiz, dado os limites $\alpha$ e $\beta$ já estabelecidos.}
     \label{fig:alpha_beta}
     \legend{Fonte: Elaborado pelo autor}
 \end{figure}
