@@ -80,24 +80,15 @@ Define a reproducible experiment matrix:
 | phase vs flat | 60s | 30 |
 | critical vs flat | 60s | 30 |
 
-- [ ] Run each pairing in the matrix
-- [ ] Save results to `results/` with clear filenames (e.g., `proportional_vs_flat_60s.json`)
-- [ ] Compute win rates and confidence intervals
+- [x] Run each pairing in the matrix
+- [x] Save results to `results/` with clear filenames (e.g., `proportional_vs_flat_60s.json`)
+- [x] Compute win rates and confidence intervals
 
 ---
 
 ## Phase 6 — Analysis & Write-Up
 
-- [ ] Plot win rate per strategy (bar chart or table)
-- [ ] Plot avg thinking time per move per strategy
-- [ ] Analyze: do strategies spend more time on "critical" moves? Does it pay off?
-- [ ] Write thesis chapters based on findings
-
----
-
-## Backlog (nice-to-have, not blocking)
-
-- [ ] Add `tests/` unit tests for board logic and time manager calculations
-- [ ] Improve Gomoku threat detection for use in `critical.py`
-- [ ] Add move-timing output to match history files
-- [ ] Visualize a game replay from `history.txt`
+- [x] Plot win rate per strategy (bar chart or table)
+- [x] Plot avg thinking time per move per strategy
+- [x] Analyze: do strategies spend more time on "critical" moves? Does it pay off?
+- [x] Write thesis chapters based on findings
