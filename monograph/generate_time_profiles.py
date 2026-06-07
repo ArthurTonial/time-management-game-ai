@@ -86,7 +86,7 @@ ax.text((BOUNDARY_AB + BOUNDARY_MF) / 2, ymax_label, 'Meio do jogo', ha='center'
 ax.text((BOUNDARY_MF + N_MOVES) / 2,     ymax_label, 'Final',        ha='center', va='top', fontsize=8, color='#555555')
 
 # Strategy lines
-ax.plot(x, flat_t,  label='Flat',         color='#555555', linewidth=1.8, linestyle='--', zorder=3)
+ax.plot(x, flat_t,  label='Flat',         color='#000000', linewidth=2.2, linestyle=(0, (5, 2)), zorder=3)
 ax.plot(x, prop_t,  label='Proporcional', color='#2196F3', linewidth=1.8, zorder=3)
 ax.plot(x, phase_t, label='Por Fase',     color='#FF9800', linewidth=1.8, zorder=3)
 ax.plot(x, crit_t,  label='Crítica',      color='#E53935', linewidth=1.5, alpha=0.9, zorder=3)
