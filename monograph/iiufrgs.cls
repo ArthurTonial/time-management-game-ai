@@ -79,7 +79,7 @@
 \RequirePackage{keyval}
 \RequirePackage{fixltx2e}
 
-\RequirePackage[brazilian,english]{babel}
+\RequirePackage[english,brazilian]{babel}
 \input{brazilian.babel}
 \input{english.babel}
 \if@english
@@ -135,11 +135,7 @@
 	% O modelo da UFRGS requer que os títulos dos trabalhos estejam em negrito.
     % Isso é opcional na norma ABNT (que permite que seja usado itálico) e
     % não é o padrão do abntex2.
-    abnt-emphasize=bf,
-    % Sobrenomes em maiúsculas nas referências (norma ABNT).
-    abnt-last-name=allcaps,
-    % Conjunção entre autores em português.
-    abnt-and-type=e
+    abnt-emphasize=bf
 ]{abntex2cite}
 \fi
 
