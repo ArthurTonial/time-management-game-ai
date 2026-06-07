@@ -162,6 +162,8 @@ Em partidas competitivas, o orçamento de tempo total por jogador é fixo e deve
 
 A estratégia mais simples — dividir o tempo restante igualmente entre os movimentos estimados — é também a mais comum na prática \cite{browne2012survey}. Ela ignora, porém, que nem todos os lances têm a mesma importância: posições com ameaças táticas imediatas são fatais se mal respondidas, enquanto lances de abertura com tabuleiro esparso tendem a ter consequências mais difusas. Investir tempo adicional nos momentos críticos e economizar nos demais poderia, em teoria, aumentar a qualidade agregada das decisões sem alterar o orçamento total. Essa lacuna motiva o presente trabalho.
 
+A hipótese central é que estratégias de alocação sensíveis ao estado do jogo — em particular, aquelas capazes de identificar momentos táticos críticos — superam a alocação uniforme em taxa de vitórias. A motivação é direta: se o valor marginal de uma iteração adicional do MCTS é maior em posições de alta importância tática, redistribuir tempo para esses momentos deve aumentar a qualidade agregada das decisões sem alterar o orçamento total.
+
 % ---
 \section{Objetivos}
 \label{sec:objectives}
@@ -176,12 +178,6 @@ A estratégia mais simples — dividir o tempo restante igualmente entre os movi
     \item Medir o impacto de cada estratégia em duelos com condições controladas — orçamento fixo, alternância de cores e número de partidas suficiente para inferência estatística;
     \item Analisar os trade-offs e limitações de cada abordagem à luz dos resultados obtidos.
 \end{itemize}
-
-% ---
-\section{Hipótese}
-\label{sec:hypothesis}
-
-A hipótese central é que estratégias de alocação sensíveis ao estado do jogo — em particular, aquelas capazes de identificar momentos táticos críticos — superam a alocação uniforme em taxa de vitórias. A motivação é direta: se o valor marginal de uma iteração adicional do MCTS é maior em posições de alta importância tática, redistribuir tempo para esses momentos deve aumentar a qualidade agregada das decisões sem alterar o orçamento total.
 
 % ---
 \section{Organização do Trabalho}
