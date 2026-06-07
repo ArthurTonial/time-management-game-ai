@@ -91,12 +91,24 @@ Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 
 % resumo na língua do documento
 \begin{abstract}
-% TODO: escrever resumo (máx. 500 palavras)
+O Monte Carlo Tree Search (MCTS) é um algoritmo \emph{anytime} para jogos: dado mais tempo por turno, produz decisões de maior qualidade. Em partidas competitivas com orçamento de tempo fixo por jogador, surge o problema de como distribuir esse orçamento entre os lances da partida. A estratégia mais comum — dividir o tempo restante igualmente — ignora que posições com ameaças táticas imediatas são muito mais críticas do que lances de abertura, onde o espaço de busca é vasto e as consequências são difusas.
+
+Este trabalho propõe e compara quatro estratégias de alocação de tempo por lance aplicadas a um agente MCTS no Gomoku 15×15: (i) uniforme (\emph{flat}), utilizada como \emph{baseline}; (ii) proporcional, que escala a alocação com o preenchimento do tabuleiro; (iii) por fase, que aplica multiplicadores distintos na abertura, meio do jogo e final; e (iv) crítica, que detecta ameaças de 4-em-linha aberta e dobra o tempo alocado nesses lances. Cada estratégia foi avaliada em torneios de 400 partidas contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
+
+A estratégia crítica obteve 61,8\% de vitórias ($p < 0{,}001$), superando o \emph{baseline} de forma consistente em ambas as cores e revertendo completamente a desvantagem estrutural do jogador branco. A estratégia por fase obteve 40,2\% ($p < 0{,}001$), sendo significativamente inferior ao \emph{baseline}: o excesso de tempo investido no meio do jogo esgota o orçamento antes dos lances decisivos do final. A estratégia proporcional obteve 52,2\% ($p = 0{,}37$), resultado estatisticamente indistinguível do \emph{baseline}.
+
+O achado central é que a qualidade do sinal de alocação importa mais do que o volume de tempo redistribuído. A estratégia crítica, com um sinal binário simples ativado em apenas 16\% dos lances, superou estratégias que redistribuem tempo de forma mais contínua ao longo da partida. A hipótese do trabalho é confirmada parcialmente: alocação inteligente supera o \emph{baseline} quando o sinal utilizado é específico e preciso o suficiente.
 \end{abstract}
 
 % resumo na outra língua
 \begin{englishabstract}{Time Management Strategies per Move for MCTS Agents in Gomoku}{Monte Carlo Tree Search. time management. Gomoku. board games. artificial intelligence}
-% TODO: escrever abstract (máx. 500 palavras)
+Monte Carlo Tree Search (MCTS) is an anytime algorithm for games: given more time per turn, it produces higher-quality decisions. In competitive settings with a fixed time budget per player, the problem of how to distribute this budget across the moves of a game arises. The most common strategy — dividing the remaining time equally among estimated remaining moves — ignores that positions with immediate tactical threats are far more critical than opening moves, where the search space is vast and consequences are diffuse.
+
+This work proposes and compares four per-move time allocation strategies applied to an MCTS agent in 15×15 Gomoku: (i) uniform (flat), used as baseline; (ii) proportional, scaling allocation with board fill ratio; (iii) phase-based, applying distinct multipliers for the opening, midgame, and endgame; and (iv) critical, detecting open four-in-a-row threats and doubling the time allocated to those moves. Each strategy was evaluated in tournaments of 400 games against the flat baseline, with a budget of 60 seconds per player and color alternation to control the first-move advantage.
+
+The critical strategy achieved 61.8\% wins ($p < 0.001$), consistently outperforming the baseline in both colors and fully reversing the structural disadvantage of the White player. The phase strategy achieved 40.2\% wins ($p < 0.001$), performing significantly worse than the baseline: overspending in the midgame depletes the budget before the decisive endgame moves. The proportional strategy achieved 52.2\% wins ($p = 0.37$), statistically indistinguishable from the baseline.
+
+The central finding is that the quality of the allocation signal matters more than the volume of time redistributed. The critical strategy, using a simple binary signal activated on only 16\% of moves, outperformed strategies that redistribute time continuously throughout the game. The work's hypothesis is partially confirmed: intelligent allocation outperforms the baseline when the signal is specific and precise enough.
 \end{englishabstract}
 
 % lista de figuras
@@ -128,7 +140,7 @@ Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 % -----------------------------------------------------------------------
 \chapter{Introdução}
 
-A Inteligência Artificial tem avançado de forma expressiva nas últimas décadas, permeando domínios que vão da medicina ao planejamento logístico. Um dos ambientes que mais contribuiu para o desenvolvimento dessa área são os jogos: sua estrutura formal e adversarial oferece um laboratório controlado no qual algoritmos podem ser avaliados de forma rigorosa e comparável. Este trabalho insere-se nessa tradição, investigando um aspecto específico e pouco explorado de agentes automáticos para jogos: a distribuição inteligente do orçamento de tempo entre os movimentos de uma partida.
+A Inteligência Artificial (IA) tem avançado de forma expressiva nas últimas décadas, permeando domínios que vão da medicina ao planejamento logístico. Um dos ambientes que mais contribuiu para o desenvolvimento dessa área são os jogos: sua estrutura formal e adversarial oferece um laboratório controlado no qual algoritmos podem ser avaliados de forma rigorosa e comparável. Este trabalho insere-se nessa tradição, investigando um aspecto específico e pouco explorado de agentes automáticos para jogos: a distribuição inteligente do orçamento de tempo entre os movimentos de uma partida.
 
 % ---
 \section{Inteligência Artificial em Jogos}
@@ -136,7 +148,7 @@ A Inteligência Artificial tem avançado de forma expressiva nas últimas décad
 
 Jogos de tabuleiro constituem um \textit{benchmark} clássico para agentes de IA desde as primeiras décadas da área. \citet{shannon1950programming} foi pioneiro ao analisar formalmente o problema de jogar xadrez por computador, estabelecendo os fundamentos teóricos que viriam a embasar décadas de pesquisa. A representação de uma partida como uma árvore de estados — com alternância de movimentos entre dois adversários — é a estrutura central de toda essa linha de trabalho.
 
-O algoritmo Minimax e suas extensões (Seção~\ref{sec:minimax}) formalizaram essa estrutura e, combinados com funções de avaliação heurísticas cuidadosamente elaboradas, permitiram que programas de Xadrez atingissem nível grandmestre. Com o surgimento do Monte Carlo Tree Search (MCTS) \cite{coulom2006efficient,kocsis2006bandit}, porém, abriu-se uma nova fronteira: ao estimar o valor de posições por simulação estatística em vez de busca exaustiva, o MCTS dispensou a necessidade de funções de avaliação explícitas e demonstrou saltos de desempenho expressivos em jogos de alta complexidade, como o Go \cite{gelly2006modification}. Esse avanço culminou em marcos históricos como o AlphaGo e o AlphaZero, que combinaram MCTS com aprendizado profundo para superar os melhores jogadores humanos em Go e Xadrez.
+O algoritmo Minimax e suas extensões (Seção~\ref{sec:minimax}) formalizaram essa estrutura e, combinados com funções de avaliação heurísticas cuidadosamente elaboradas, permitiram que programas de Xadrez atingissem nível grandmestre. Com o surgimento da Busca em Árvore de Monte Carlo (\textit{Monte Carlo Tree Search} --- MCTS) \cite{coulom2006efficient,kocsis2006bandit}, porém, abriu-se uma nova fronteira: ao estimar o valor de posições por simulação estatística em vez de busca exaustiva, o MCTS dispensou a necessidade de funções de avaliação explícitas e demonstrou saltos de desempenho expressivos em jogos de alta complexidade, como o Go \cite{gelly2006modification}. Esse avanço culminou em marcos históricos como o AlphaGo e o AlphaZero, que combinaram MCTS com aprendizado profundo para superar os melhores jogadores humanos em Go e Xadrez.
 
 Este trabalho foca exclusivamente em agentes baseados em MCTS sem aprendizado de máquina. O objetivo é estudar o comportamento do algoritmo em condições de tempo limitado — um problema que permanece relevante e aberto independentemente das capacidades de redes neurais.
 
@@ -144,7 +156,7 @@ Este trabalho foca exclusivamente em agentes baseados em MCTS sem aprendizado de
 \section{Motivação e Justificativa}
 \label{sec:motivation}
 
-O MCTS foi amplamente estudado sob diferentes ângulos: a formulação do critério de seleção UCT \cite{kocsis2006bandit}, variantes de expansão e rollout, e aplicações a domínios além dos jogos \cite{browne2012survey}. Uma dimensão prática, porém, recebeu atenção comparativamente limitada: o \emph{gerenciamento de tempo por lance}.
+O MCTS foi amplamente estudado sob diferentes ângulos: a formulação do critério de seleção UCT \cite{kocsis2006bandit}, variantes de expansão e simulação(\emph{rollout}), e aplicações a domínios além dos jogos \cite{browne2012survey}. Uma dimensão prática, porém, recebeu atenção comparativamente limitada: o gerenciamento de tempo por lance.
 
 Em partidas competitivas, o orçamento de tempo total por jogador é fixo e deve ser distribuído entre todos os lances da partida. Como o MCTS é um algoritmo \emph{anytime} — pode ser interrompido a qualquer momento e retorna o melhor movimento encontrado até então — o tempo disponível por turno é o recurso natural de controle: mais tempo implica mais iterações, estimativas mais precisas e decisões de maior qualidade. A questão que se coloca é como distribuir esse orçamento de forma eficaz ao longo de uma partida.
 
@@ -189,13 +201,14 @@ Este capítulo apresenta os conceitos necessários para a compreensão do trabal
 \section{Busca em Árvores de Jogo}
 \label{sec:minimax}
 
-A busca em árvores de jogo é o paradigma central dos agentes automáticos para jogos de dois jogadores com informação perfeita. Esta seção apresenta o problema na sua formulação clássica — o algoritmo Minimax e sua principal otimização, a poda alfa-beta — que constituem a fundação histórica da área e o ponto de partida conceitual para compreender as motivações do MCTS. A limitação fundamental dessas abordagens em domínios de alta complexidade, discutida na Seção~\ref{sec:minimax_limits}, é precisamente o que motivou o desenvolvimento do MCTS como alternativa baseada em simulação.
+A busca em árvores de jogo é o paradigma central dos agentes automáticos para jogos de dois jogadores com informação perfeita --- aqueles em que o estado completo do jogo é visível a ambos os jogadores a qualquer momento, sem elementos ocultos ou aleatoriedade, como ocorre no Xadrez, no Go e no Gomoku. Esta seção apresenta o problema na sua formulação clássica — o algoritmo Minimax e sua principal otimização, a poda alfa-beta — que constituem a fundação histórica da área e o ponto de partida conceitual para compreender as motivações do MCTS. A limitação fundamental dessas abordagens em domínios de alta complexidade, discutida na Seção~\ref{sec:minimax_limits}, é precisamente o que motivou o desenvolvimento do MCTS como alternativa baseada em simulação.
 
-Jogos de dois jogadores com informação perfeita e soma zero constituem um dos domínios mais estudados em Inteligência Artificial. Nesse modelo, dois agentes se alternam realizando movimentos em um estado compartilhado; o ganho de um implica a perda equivalente do outro. Xadrez, damas, Go e Gomoku são exemplos canônicos. A representação natural de uma partida é uma \emph{árvore de jogo}: cada nó corresponde a um estado e cada aresta a um movimento legal, com folhas representando estados terminais cujo valor é determinado pelo resultado da partida.
+Jogos de dois jogadores com informação perfeita e soma zero constituem um dos domínios mais estudados em Inteligência Artificial. Nesse modelo, dois agentes se alternam realizando movimentos em um estado compartilhado; o ganho de um implica a perda equivalente do outro. Xadrez, damas, Go e Gomoku são exemplos canônicos. A representação natural de uma partida é uma árvore de jogo: cada nó corresponde a um estado e cada aresta a um movimento legal, com folhas representando estados terminais cujo valor é determinado pelo resultado da partida.
 
-O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore recursivamente, atribuindo a cada nó o melhor resultado possível sob jogo ótimo de ambos os lados. O jogador maximizador (\emph{MAX}) escolhe o movimento de maior valor; o minimizador (\emph{MIN}), o de menor:
+O algoritmo Minimax \cite{russell2016artificial} percorre essa árvore recursivamente, atribuindo a cada nó o melhor resultado possível sob jogo ótimo de ambos os lados (Figura~\ref{fig:minimax_tree}). O jogador maximizador (\emph{MAX}) escolhe o movimento de maior valor; o minimizador (\emph{MIN}), o de menor (Equação~\ref{eq:minimax}):
 
 \begin{equation}
+    \label{eq:minimax}
     V(n) =
     \begin{cases}
         \text{utilidade}(n)             & \text{se } n \text{ é folha}      \\
@@ -235,7 +248,7 @@ Esses obstáculos motivaram o desenvolvimento de abordagens baseadas em simulaç
 
 O Monte Carlo Tree Search (MCTS) é uma família de algoritmos de busca que combina a expansão seletiva de uma árvore de jogo com a estimativa de valores por simulação estocástica \cite{browne2012survey}. Diferentemente do Minimax, o MCTS não requer função de avaliação: o valor de um estado é estimado pela proporção de vitórias obtidas em simulações (chamadas \emph{rollouts}) iniciadas a partir daquele estado.
 
-O MCTS foi proposto de forma seminal por \citet{coulom2006efficient}, que introduziu o uso de simulações Monte Carlo combinadas com busca em árvore para jogos de tabuleiro. A variante UCT (\emph{Upper Confidence Bound for Trees}), que se tornou a formulação dominante, foi proposta por \citet{kocsis2006bandit} ao aplicar o critério UCB1 à seleção de nós na árvore. A aplicação ao Go por \citet{gelly2006modification} demonstrou saltos substanciais de desempenho em relação às abordagens anteriores, e o algoritmo passou a ser adotado em uma ampla variedade de domínios \cite{browne2012survey}.
+O MCTS foi proposto de forma seminal por \citet{coulom2006efficient}, que introduziu o uso de simulações Monte Carlo combinadas com busca em árvore para jogos de tabuleiro. A variante Limite de Confiança Superior para Árvores (\emph{Upper Confidence Bound for Trees} --- UCT), que se tornou a formulação dominante, foi proposta por \citet{kocsis2006bandit} ao aplicar o critério Limite de Confiança Superior 1 (\emph{Upper Confidence Bound 1} --- UCB1) à seleção de nós na árvore. A aplicação ao Go por \citet{gelly2006modification} demonstrou saltos substanciais de desempenho em relação às abordagens anteriores, e o algoritmo passou a ser adotado em uma ampla variedade de domínios \cite{browne2012survey}.
 
 \subsection{Visão geral do MCTS}
 \label{sec:mcts_overview}
@@ -252,20 +265,20 @@ O MCTS opera iterativamente, construindo uma árvore de busca parcial a partir d
     \item \textbf{Retropropagação}: o resultado da simulação é propagado de volta ao longo do caminho percorrido, atualizando os contadores de visitas $N(v)$ e de valor acumulado $W(v)$ de cada nó.
 \end{enumerate}
 
-Ao final de um orçamento de iterações ou tempo, o algoritmo retorna o movimento correspondente ao filho da raiz mais visitado, que tende a ser o de maior valor estimado.
+Ao final de um orçamento de iterações ou tempo, o algoritmo retorna o movimento correspondente ao filho da raiz mais visitado, que tende a ser o de maior valor estimado (Figura~\ref{fig:mcts_cycle}).
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{images/MCTS_iteration.png}
     \caption{Ciclo de uma iteração do MCTS composto pelas quatro fases: seleção, expansão, simulação (\emph{rollout}) e retropropagação.}
     \label{fig:mcts_cycle}
-    \legend{Fonte: \citeauthor{browne2012survey} (\citeyear{browne2012survey})}
+    \legend{Fonte: Extraído de \citeauthor{browne2012survey} (\citeyear{browne2012survey})}
 \end{figure}
 
 \subsection{UCB1 e o dilema exploração-exploração}
 \label{sec:ucb1}
 
-O critério de seleção é o coração do MCTS. O problema pode ser formulado como um \emph{multi-armed bandit}: cada filho de um nó é um braço cujo valor real é desconhecido e deve ser estimado por tentativas sucessivas. O UCB1 (\emph{Upper Confidence Bound 1}), proposto por \citet{auer2002finite}, balanceia a exploração de nós promissores com a exploração de nós pouco visitados:
+O critério de seleção é o coração do MCTS. O problema pode ser formulado como um \emph{multi-armed bandit}: cada filho de um nó é um braço cujo valor real é desconhecido e deve ser estimado por tentativas sucessivas. O UCB1, proposto por \citet{auer2002finite}, balanceia a exploração de nós promissores com a exploração de nós pouco visitados (Equação~\ref{eq:ucb1}):
 
 \begin{equation}
     \text{UCB1}(v) = \frac{W(v)}{N(v)} + C \cdot \sqrt{\frac{\ln N(\text{pai}(v))}{N(v)}}
@@ -274,7 +287,7 @@ O critério de seleção é o coração do MCTS. O problema pode ser formulado c
 
 onde $W(v)/N(v)$ é a taxa de vitórias estimada do nó $v$ (\emph{explotação}), e o segundo termo favorece nós pouco visitados em relação aos seus irmãos (\emph{exploração}). A constante $C$ controla o balanço entre os dois termos; o valor $C = \sqrt{2}$ é teoricamente motivado \cite{kocsis2006bandit} e amplamente utilizado na prática.
 
-A adaptação do UCB1 para árvores de jogo, denominada UCT (\emph{UCB applied to Trees}), consiste em aplicar a Equação~\ref{eq:ucb1} recursivamente em cada nó durante a fase de seleção, com a ressalva de que os valores são invertidos entre nós de perspectivas opostas, dado que vitória para um jogador é derrota para o outro. A Figura~\ref{fig:ucb1_curve} ilustra como o valor UCB1 varia em função do número de visitas para diferentes taxas de vitória estimadas; a Figura~\ref{fig:ucb1_bonus} mostra o comportamento isolado do termo de exploração.
+A adaptação do UCB1 para árvores de jogo, denominada UCT, consiste em aplicar a Equação~\ref{eq:ucb1} recursivamente em cada nó durante a fase de seleção, com a ressalva de que os valores são invertidos entre nós de perspectivas opostas, dado que vitória para um jogador é derrota para o outro. A Figura~\ref{fig:ucb1_curve} ilustra como o valor UCB1 varia em função do número de visitas para diferentes taxas de vitória estimadas; a Figura~\ref{fig:ucb1_bonus} mostra o comportamento isolado do termo de exploração.
 
 \begin{figure}[htbp]
     \centering
@@ -295,12 +308,12 @@ A adaptação do UCB1 para árvores de jogo, denominada UCT (\emph{UCB applied t
     \legend{Fonte: Elaborado pelo autor}
 \end{figure}
 
-\subsection{MCTS como algoritmo anytime}
+\subsection{MCTS como algoritmo \emph{anytime}}
 \label{sec:mcts_anytime}
 
 Uma propriedade fundamental do MCTS é sua natureza \emph{anytime}: o algoritmo pode ser interrompido a qualquer momento e retorna uma resposta válida — o movimento mais visitado até então. A qualidade da resposta melhora monotonicamente com o número de iterações: mais simulações implicam estimativas de valor mais precisas e maior profundidade efetiva de busca.
 
-Essa propriedade contrasta diretamente com o Minimax com profundidade fixa, que somente fornece resultado ao completar a busca até a profundidade estipulada. No MCTS, o recurso natural de controle é o tempo disponível: dado um orçamento de $T$ segundos por turno, o algoritmo executa o maior número possível de iterações dentro desse limite. Como a taxa de melhoria decresce com o número de iterações (retornos marginais decrescentes), a questão de \emph{como distribuir} o orçamento total de tempo entre os movimentos de uma partida torna-se relevante — e é precisamente o problema abordado neste trabalho.
+Essa propriedade contrasta diretamente com o Minimax com profundidade fixa, que somente fornece resultado ao completar a busca até a profundidade estipulada. No MCTS, o recurso natural de controle é o tempo disponível: dado um orçamento de $T$ segundos por turno, o algoritmo executa o maior número possível de iterações dentro desse limite. Como a taxa de melhoria decresce com o número de iterações (retornos marginais decrescentes), a questão de como distribuir o orçamento total de tempo entre os movimentos de uma partida torna-se relevante — e é precisamente o problema abordado neste trabalho.
 
 % ---
 \section{Gerenciamento de Tempo em Jogos}
@@ -313,27 +326,27 @@ O gerenciamento de tempo é o problema de decidir, a cada turno, quanto do orça
 
 O controle de tempo é parte integrante das competições de jogos desde o século XIX. No Xadrez, o relógio foi introduzido em 1861 para evitar que partidas se prolongassem indefinidamente \cite{shannon1950programming}. Ao longo do tempo, diferentes modalidades de controle foram adotadas: tempo fixo por partida, tempo fixo por lance, e o sistema Fischer, no qual cada jogador recebe um bônus de tempo a cada lance realizado.
 
-Essas modalidades impõem ao jogador — humano ou computador — o problema de \emph{alocação de tempo}: dado um orçamento total finito $T$, quanto tempo dedicar a cada movimento? Jogadores humanos experientes intuitivamente gastam mais tempo em posições críticas e menos em lances óbvios. A formalização dessa estratégia para agentes automáticos é o objeto de estudo desta seção.
+Essas modalidades impõem ao jogador — humano ou computador — o problema de alocação de tempo: dado um orçamento total finito $T$, quanto tempo dedicar a cada movimento? Jogadores humanos experientes intuitivamente gastam mais tempo em posições críticas e menos em lances óbvios. A formalização dessa estratégia para agentes automáticos é o objeto de estudo desta seção.
 
 \subsection{Tipos de estratégias de alocação de tempo}
 \label{sec:timealloc_types}
 
 A literatura identifica um espectro de estratégias de alocação de tempo para agentes de jogo. As principais categorias são descritas a seguir, em ordem crescente de sofisticação.
 
-\textbf{Uniforme} (\emph{flat}): o tempo disponível é dividido igualmente entre os movimentos estimados restantes. Formalmente, se $T_r$ é o tempo restante e $\hat{N}$ é a estimativa de movimentos restantes para aquele jogador, o tempo alocado ao lance corrente é $t = T_r / \hat{N}$. Essa abordagem é simples, previsível e serve como baseline natural para comparações.
+\textbf{Uniforme} (\emph{flat}): o tempo disponível é dividido igualmente entre os movimentos estimados restantes. Formalmente, se $T_r$ é o tempo restante e $\hat{N}$ é a estimativa de movimentos restantes para aquele jogador, o tempo alocado ao lance corrente é $t = T_r / \hat{N}$. Essa abordagem é simples, previsível e serve como \emph{baseline} natural para comparações.
 
 \textbf{Proporcional}: variante do uniforme que se corrige ao longo da partida. Em vez de usar uma estimativa fixa de movimentos restantes, recalcula $\hat{N}$ com base na posição atual do tabuleiro, ajustando a alocação conforme a partida evolui.
 
 \textbf{Baseada em fase}: aplica multiplicadores distintos sobre a alocação uniforme de acordo com a fase do jogo (abertura, meio, fim). A motivação é que o meio do jogo concentra as decisões táticas mais consequentes, merecendo maior investimento de tempo.
 
-\textbf{Reativa} (ou \emph{baseada em criticidade}): detecta posições táticas especiais — ameaças imediatas de vitória ou derrota — e aloca tempo extra nessas situações. Requer um critério de detecção de criticidade, que pode ir desde padrões simples (como sequências de $k-1$ peças em linha) até avaliações mais elaboradas.
+\textbf{Reativa} (ou baseada em criticidade): detecta posições táticas especiais — ameaças imediatas de vitória ou derrota — e aloca tempo extra nessas situações. Requer um critério de detecção de criticidade, que pode ir desde padrões simples (como sequências de $k-1$ peças em linha) até avaliações mais elaboradas.
 
 \textbf{Adaptativa/aprendida}: aprende a distribuição ótima de tempo a partir de dados de partidas anteriores, tipicamente por aprendizado por reforço ou análise estatística. Essa abordagem está fora do escopo do presente trabalho, mas é apontada como direção futura relevante.
 
 \subsection{Gerenciamento de tempo para MCTS}
 \label{sec:timemanagement_mcts}
 
-Apesar de sua importância prática, o problema de gerenciamento de tempo para agentes MCTS recebeu atenção relativamente limitada na literatura em comparação com outros aspectos do algoritmo. \citet{huang2010time} investigaram estratégias de alocação para um agente de Go baseado em MCTS, demonstrando que alocações adaptativas — que destinam mais tempo a posições com alta incerteza na estimativa de valor — superam a alocação uniforme em taxa de vitórias. \citet{finnsson2008simulation} abordaram o problema no contexto de \emph{General Game Playing} (GGP), onde o agente deve jogar jogos desconhecidos em tempo limitado, e propuseram heurísticas baseadas na distribuição de visitas da árvore de busca para identificar lances que merecem atenção adicional.
+Apesar de sua importância prática, o problema de gerenciamento de tempo para agentes MCTS recebeu atenção relativamente limitada na literatura em comparação com outros aspectos do algoritmo. \citet{huang2010time} investigaram estratégias de alocação para um agente de Go baseado em MCTS, demonstrando que alocações adaptativas — que destinam mais tempo a posições com alta incerteza na estimativa de valor — superam a alocação uniforme em taxa de vitórias. \citet{finnsson2008simulation} abordaram o problema no contexto de Jogo Geral (\emph{General Game Playing} --- GGP), onde o agente deve jogar jogos desconhecidos em tempo limitado, e propuseram heurísticas baseadas na distribuição de visitas da árvore de busca para identificar lances que merecem atenção adicional.
 
 \citet{browne2012survey} identificam o gerenciamento de tempo como um dos fatores práticos mais relevantes para o desempenho de agentes MCTS em competições, destacando que a maioria das implementações utiliza estratégias simples e que há espaço considerável para ganhos através de abordagens mais sofisticadas.
 
@@ -359,7 +372,7 @@ O Gomoku apresenta propriedades que o tornam um domínio adequado para o estudo 
 
 \textbf{Fases distintas}: a partida pode ser dividida em fases com características estratégicas distintas. Na abertura, o tabuleiro é esparso e as decisões têm caráter posicional de longo prazo. No meio do jogo, surgem ameaças táticas diretas — sequências de três e quatro peças em linha — que demandam resposta imediata. No final, o tabuleiro está mais preenchido e as sequências críticas são mais frequentes. Essa estrutura justifica estratégias baseadas em fase.
 
-\textbf{Padrões táticos críticos}: a ameaça de 4-em-linha aberta (quatro peças consecutivas com ambas as extremidades livres) constitui uma ameaça imediata de vitória que, se não bloqueada, resulta inevitavelmente em derrota. Da mesma forma, um jogador que cria duas ameaças simultâneas de 3-em-linha (denominado \emph{duplo três}) garante a vitória independentemente da resposta do oponente. Esses padrões motivam estratégias de alocação reativas que identificam posições críticas e destinam tempo adicional a elas.
+\textbf{Padrões táticos críticos}: a ameaça de 4-em-linha aberta (quatro peças consecutivas com ambas as extremidades livres) constitui uma ameaça imediata de vitória que, se não bloqueada, resulta inevitavelmente em derrota. Da mesma forma, um jogador que cria duas ameaças simultâneas de 3-em-linha (denominado \emph{duplo três}) garante a vitória independentemente da resposta do oponente. Esses padrões motivam estratégias de alocação reativas que identificam posições críticas e destinam tempo adicional a elas (Figura~\ref{fig:gomoku_patterns}).
 
 \begin{figure}[htbp]
     \centering
@@ -386,21 +399,21 @@ Este capítulo apresenta a proposta do trabalho. A Seção~\ref{sec:problem} for
 
 O ponto de partida é a propriedade \emph{anytime} do MCTS (Seção~\ref{sec:mcts_anytime}): dado um prazo $t_i$ segundos para o lance $i$, o agente executa o maior número possível de iterações dentro desse limite e retorna o movimento mais visitado. A qualidade da decisão é uma função crescente do tempo disponível — mais iterações implicam estimativas de valor mais precisas e maior profundidade efetiva de busca. Contudo, essa função não é linear: os ganhos de precisão seguem uma lei de retornos decrescentes. As primeiras iterações eliminam incerteza mais rapidamente, pois amostreiam regiões do espaço de busca ainda completamente desconhecidas. À medida que certas linhas de jogo acumulam visitas, iterações adicionais refinam estimativas já razoáveis, contribuindo cada vez menos para a qualidade da decisão final.
 
-Essa característica tem uma consequência direta para o problema de alocação: \emph{redistribuir} tempo de posições de baixo retorno marginal para posições de alto retorno marginal pode aumentar a qualidade agregada das decisões sem alterar o orçamento total. Formalmente, se $Q(t)$ denota a qualidade esperada de uma decisão com $t$ segundos de busca, e se $Q$ é côncava (retornos decrescentes), então para dois lances $i$ e $j$ com importâncias distintas $v_i > v_j$, alocar mais tempo ao lance $i$ e menos ao $j$ pode aumentar $v_i \cdot Q(t_i) + v_j \cdot Q(t_j)$ em relação à alocação uniforme — desde que a diferença de importância seja suficientemente grande para compensar a concavidade de $Q$.
+Essa característica tem uma consequência direta para o problema de alocação: redistribuir tempo de posições de baixo retorno marginal para posições de alto retorno marginal pode aumentar a qualidade agregada das decisões sem alterar o orçamento total. Formalmente, se $Q(t)$ denota a qualidade esperada de uma decisão com $t$ segundos de busca, e se $Q$ é côncava (retornos decrescentes), então para dois lances $i$ e $j$ com importâncias distintas $v_i > v_j$, alocar mais tempo ao lance $i$ e menos ao $j$ pode aumentar $v_i \cdot Q(t_i) + v_j \cdot Q(t_j)$ em relação à alocação uniforme — desde que a diferença de importância seja suficientemente grande para compensar a concavidade de $Q$.
 
 O argumento acima é a motivação central deste trabalho: se algumas posições do Gomoku têm $v_i \gg v_j$ — isto é, errar nelas é muito mais custoso do que errar em outras —, então uma política de alocação que identifique e priorize essas posições pode superar a alocação uniforme em taxa de vitórias. As estratégias propostas na Seção~\ref{sec:strategies} operacionalizam diferentes critérios para estimar essa importância relativa.
 
 \subsection{Formulação do problema}
 \label{sec:problem_formal}
 
-Seja $M$ o número total de movimentos do jogador ao longo de uma partida e $T$ o orçamento total de tempo disponível. O problema de alocação de tempo por lance consiste em encontrar uma sequência $t_1, t_2, \ldots, t_M$ tal que:
+Seja $M$ o número total de movimentos do jogador ao longo de uma partida e $T$ o orçamento total de tempo disponível. O problema de alocação de tempo por lance consiste em encontrar uma sequência $t_1, t_2, \ldots, t_M$ tal que (Equação~\ref{eq:budget_constraint}):
 
 \begin{equation}
     \sum_{i=1}^{M} t_i \leq T, \qquad t_i > 0 \quad \forall\, i
 \label{eq:budget_constraint}
 \end{equation}
 
-e que maximize a taxa de vitórias esperada do agente em duelos de longa duração. Uma política de alocação $\pi$ mapeia o estado observável no turno $i$ — tempo restante, número do lance, estado do tabuleiro — para um tempo $t_i$:
+e que maximize a taxa de vitórias esperada do agente em duelos de longa duração (Equação~\ref{eq:objective}). Uma política de alocação $\pi$ mapeia o estado observável no turno $i$ — tempo restante, número do lance, estado do tabuleiro — para um tempo $t_i$:
 
 \begin{equation}
     \pi^* = \arg\max_{\pi} \; \mathbb{E}\bigl[\text{vitórias}(\pi)\bigr]
@@ -415,7 +428,7 @@ Este trabalho não busca encontrar a política ótima $\pi^*$, que exigiria uma 
 \section{Arquitetura Conceitual}
 \label{sec:architecture}
 
-A solução organiza-se em torno de uma separação clara entre duas responsabilidades: a \emph{política de alocação de tempo} e o \emph{motor de busca MCTS}. O motor de busca opera de forma agnóstica à estratégia de tempo: recebe um prazo $t_i$ e devolve o melhor movimento encontrado dentro desse prazo. A política de alocação, por sua vez, observa o estado da partida e determina $t_i$ a cada turno, sem influenciar a lógica interna do MCTS.
+A solução organiza-se em torno de uma separação clara entre duas responsabilidades: a política de alocação de tempo e o motor de busca MCTS (Figura~\ref{fig:architecture}). O motor de busca opera de forma agnóstica à estratégia de tempo: recebe um prazo $t_i$ e devolve o melhor movimento encontrado dentro desse prazo. A política de alocação, por sua vez, observa o estado da partida e determina $t_i$ a cada turno, sem influenciar a lógica interna do MCTS.
 
 \begin{figure}[htbp]
     \centering
@@ -434,7 +447,7 @@ Uma distinção fundamental entre as políticas propostas é o conjunto de infor
 
 \textbf{Políticas sensíveis ao tabuleiro} (\emph{closed-loop}): examinam o estado atual do tabuleiro para calibrar a alocação. A estratégia proporcional lê a contagem agregada de células vazias para computar a fração de preenchimento; a estratégia por fase classifica essa fração em regiões de importância distinta; a estratégia crítica inspeciona padrões táticos específicos. Essas políticas têm potencialmente maior poder de discriminação — alocam mais tempo precisamente quando o tabuleiro indica que o lance é importante —, mas introduzem um custo de análise do estado que deve ser negligenciável em relação a $t_i$ para não distorcer o experimento.
 
-Essa taxonomia tem uma implicação experimental relevante. Qualquer diferença de desempenho entre a política open-loop (flat) e as políticas closed-loop pode ser atribuída, ao menos em parte, ao uso da informação do tabuleiro como sinal de alocação. Entre as estratégias closed-loop, o grau de sofisticação da informação extraída cresce da proporcional (contagem agregada) para a por fase (classificação ordinal) e a crítica (detecção de padrões posicionais específicos).
+Essa taxonomia tem uma implicação experimental relevante. Qualquer diferença de desempenho entre a política \emph{open-loop} (flat) e as políticas \emph{closed-loop} pode ser atribuída, ao menos em parte, ao uso da informação do tabuleiro como sinal de alocação. Entre as estratégias \emph{closed-loop}, o grau de sofisticação da informação extraída cresce da proporcional (contagem agregada) para a por fase (classificação ordinal) e a crítica (detecção de padrões posicionais específicos).
 
 \subsection{Requisitos da interface de alocação}
 \label{sec:interface_requirements}
@@ -452,7 +465,7 @@ As quatro estratégias a seguir derivam diretamente dos tipos de alocação cata
 \subsection{Uniforme (\emph{Flat})}
 \label{sec:strategy_flat}
 
-A estratégia uniforme divide o orçamento restante pelo número estimado de movimentos restantes:
+A estratégia uniforme divide o orçamento restante pelo número estimado de movimentos restantes (Equação~\ref{eq:flat}):
 
 \begin{equation}
     t_i = \frac{T_r}{\hat{N}_r}
@@ -469,7 +482,7 @@ A estratégia proporcional mantém a mesma forma da Equação~\ref{eq:flat}, mas
 \subsection{Por Fase (\emph{Phase})}
 \label{sec:strategy_phase}
 
-A estratégia por fase classifica o estado da partida em fases — abertura, meio do jogo e final — e aplica um multiplicador distinto sobre a alocação uniforme em cada fase:
+A estratégia por fase classifica o estado da partida em fases — abertura, meio do jogo e final — e aplica um multiplicador distinto sobre a alocação uniforme em cada fase (Equação~\ref{eq:phase}):
 
 \begin{equation}
     t_i = \mu_{\text{fase}} \cdot \frac{T_r}{\hat{N}_r}
@@ -481,7 +494,7 @@ O multiplicador $\mu_{\text{meio}} > 1$ destina ao meio do jogo uma parcela prop
 \subsection{Crítica (\emph{Critical})}
 \label{sec:strategy_critical}
 
-A estratégia crítica opera no nível do lance individual: a cada turno, avalia se existe uma ameaça tática imediata no estado atual do tabuleiro. Na presença de uma ameaça — definida aqui como uma sequência de quatro peças em linha de qualquer jogador com ao menos uma extremidade aberta — o tempo alocado é multiplicado por um fator $\mu_{\text{crit}} > 1$; caso contrário, aplica-se um desconto $\mu_{\text{normal}} < 1$ para manter o orçamento equilibrado ao longo da partida:
+A estratégia crítica opera no nível do lance individual: a cada turno, avalia se existe uma ameaça tática imediata no estado atual do tabuleiro. Na presença de uma ameaça — definida aqui como uma sequência de quatro peças em linha de qualquer jogador com ao menos uma extremidade aberta — o tempo alocado é multiplicado por um fator $\mu_{\text{crit}} > 1$; caso contrário, aplica-se um desconto $\mu_{\text{normal}} < 1$ para manter o orçamento equilibrado ao longo da partida (Equação~\ref{eq:critical}):
 
 \begin{equation}
     t_i =
@@ -499,7 +512,7 @@ A hipótese central dessa estratégia é que erros em posições com ameaça de 
 
 As quatro estratégias podem ser situadas ao longo de três dimensões: (i) a informação utilizada para calcular $t_i$; (ii) o mecanismo pelo qual redistribuem o orçamento; e (iii) o cenário de partida em que se espera que a redistribuição traga ganho.
 
-A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. A estratégia flat (open-loop) usa estimador constante $\hat{N}_r$ e não consulta o tabuleiro. As estratégias closed-loop (proporcional, por fase e crítica) complementam o mesmo estimador com informação do tabuleiro em graus crescentes de sofisticação: a proporcional extrai apenas a contagem agregada de peças (fração de preenchimento), a por fase classifica o estado em regiões de importância média distinta, e a crítica reage a eventos posicionais específicos de alta importância pontual.
+A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. A estratégia flat (\emph{open-loop}) usa estimador constante $\hat{N}_r$ e não consulta o tabuleiro. As estratégias \emph{closed-loop} (proporcional, por fase e crítica) complementam o mesmo estimador com informação do tabuleiro em graus crescentes de sofisticação: a proporcional extrai apenas a contagem agregada de peças (fração de preenchimento), a por fase classifica o estado em regiões de importância média distinta, e a crítica reage a eventos posicionais específicos de alta importância pontual.
 
 \begin{table}[htbp]
     \centering
@@ -541,7 +554,7 @@ Este capítulo descreve a implementação do sistema desenvolvido para este trab
 \section{Visão Geral do Sistema}
 \label{sec:impl_overview}
 
-O sistema é organizado em quatro módulos independentes que se comunicam por interfaces bem definidas. O módulo \texttt{game/gomoku} implementa as regras e a representação de estados do Gomoku. O módulo \texttt{agents/mcts} implementa o agente de busca. O módulo \texttt{time\_manager} implementa as políticas de alocação de tempo. Um script \texttt{run\_duel.py} orquestra os duelos e coleta métricas. A estrutura de diretórios \texttt{game/} e \texttt{agents/} foi concebida de forma extensível: novos domínios de jogo ou novos agentes de busca podem ser integrados sem alterações na camada de gerenciamento de tempo ou no runner, embora neste trabalho apenas Gomoku e MCTS sejam instanciados.
+O sistema é organizado em quatro módulos independentes que se comunicam por interfaces bem definidas (Figura~\ref{fig:modules}). O módulo \texttt{game/gomoku} implementa as regras e a representação de estados do Gomoku. O módulo \texttt{agents/mcts} implementa o agente de busca. O módulo \texttt{time\_manager} implementa as políticas de alocação de tempo. Um script \texttt{run\_duel.py} orquestra os duelos e coleta métricas. A estrutura de diretórios \texttt{game/} e \texttt{agents/} foi concebida de forma extensível: novos domínios de jogo ou novos agentes de busca podem ser integrados sem alterações na camada de gerenciamento de tempo ou no runner, embora neste trabalho apenas Gomoku e MCTS sejam instanciados.
 
 \begin{figure}[htbp]
     \centering
@@ -563,7 +576,7 @@ A separação entre \texttt{agents/mcts} e \texttt{time\_manager} é o ponto cen
 O tabuleiro é representado por uma matriz $15 \times 15$ de caracteres: \texttt{'B'} para peça preta, \texttt{'W'} para peça branca e \texttt{'.'} para célula vazia. A interface pública relevante para este trabalho compreende:
 
 \begin{itemize}
-    \item \texttt{place\_marker(player, row, col)}: registra uma peça e atualiza o atributo \texttt{last\_move = (row, col, player)}, usado pelo rollout do MCTS.
+    \item \texttt{place\_marker(player, row, col)}: registra uma peça e atualiza o atributo \texttt{last\_move = (row, col, player)}, usado pelo \emph{rollout} do MCTS.
     \item \texttt{legal\_moves()}: retorna o conjunto de todas as células vazias como tuplas \texttt{(col, row)}.
     \item \texttt{is\_terminal\_state()}: retorna verdadeiro se algum jogador completou cinco em linha ou se o tabuleiro está completamente preenchido.
     \item \texttt{winner()}: retorna \texttt{'B'}, \texttt{'W'} ou \texttt{None} (empate).
@@ -601,19 +614,19 @@ Durante a fase de seleção, o algoritmo desce a árvore escolhendo em cada nó 
 \subsection{Rollout com viés de localidade}
 \label{sec:impl_rollout}
 
-O rollout simula uma partida a partir do nó expandido até um estado terminal ou até o limite de 200 movimentos. Em vez de escolher movimentos uniformemente ao acaso, o rollout adota um viés de localidade: prefere movimentos dentro de um raio $r = 5$ ao redor da última peça colocada no tabuleiro. Formalmente, dada a última peça em $(r_{\text{last}}, c_{\text{last}})$, o conjunto preferencial de movimentos é:
+O \emph{rollout} simula uma partida a partir do nó expandido até um estado terminal ou até o limite de 200 movimentos. Em vez de escolher movimentos uniformemente ao acaso, o \emph{rollout} adota um viés de localidade: prefere movimentos dentro de um raio $r = 5$ ao redor da última peça colocada no tabuleiro. Formalmente, dada a última peça em $(r_{\text{last}}, c_{\text{last}})$, o conjunto preferencial de movimentos é:
 
 \begin{equation}
     A_{\text{local}} = \left\{ (x, y) \in A \;\middle|\; |y - r_{\text{last}}| \leq 5 \;\text{ e }\; |x - c_{\text{last}}| \leq 5 \right\}
 \label{eq:locality_bias}
 \end{equation}
 
-Se $A_{\text{local}} \neq \emptyset$, o rollout escolhe uniformemente em $A_{\text{local}}$; caso contrário, escolhe em $A$ inteiro. Esse viés reduz efetivamente o espaço de busca durante a simulação — movimentos distantes de qualquer peça são raramente relevantes no Gomoku — e acelera a convergência das estimativas de valor sem requerer uma função de avaliação heurística.
+Se $A_{\text{local}} \neq \emptyset$, o \emph{rollout} escolhe uniformemente em $A_{\text{local}}$; caso contrário, escolhe em $A$ inteiro. Esse viés reduz efetivamente o espaço de busca durante a simulação — movimentos distantes de qualquer peça são raramente relevantes no Gomoku — e acelera a convergência das estimativas de valor sem requerer uma função de avaliação heurística.
 
 \subsection{Retropropagação}
 \label{sec:impl_backprop}
 
-A retropropagação percorre o caminho da folha até a raiz de forma iterativa. O resultado do rollout ($1{,}0$ para vitória, $0{,}0$ para derrota, $0{,}5$ para empate) é invertido a cada nível — $\text{resultado} \leftarrow 1{,}0 - \text{resultado}$ — para refletir a alternância de perspectivas entre jogadores consecutivos na árvore.
+A retropropagação percorre o caminho da folha até a raiz de forma iterativa. O resultado do \emph{rollout} ($1{,}0$ para vitória, $0{,}0$ para derrota, $0{,}5$ para empate) é invertido a cada nível — $\text{resultado} \leftarrow 1{,}0 - \text{resultado}$ — para refletir a alternância de perspectivas entre jogadores consecutivos na árvore.
 
 % ---
 \section{Camada de Gerenciamento de Tempo}
@@ -640,7 +653,7 @@ O limite inferior de $0{,}05$ s garante ao menos uma iteração MCTS; o limite s
 \subsection{Estratégia Flat}
 \label{sec:impl_flat}
 
-A estratégia flat usa um estimador constante do número de movimentos restantes:
+A estratégia flat usa um estimador constante do número de movimentos restantes (Equação~\ref{eq:flat_impl}):
 
 \begin{equation}
     \hat{N}_r = \max\!\bigl(1,\; N_{\text{const}} - i\bigr), \qquad N_{\text{const}} = 75
@@ -652,13 +665,15 @@ onde $i$ é o número de movimentos já realizados pelo jogador. O valor $N_{\te
 \subsection{Estratégia Proporcional}
 \label{sec:impl_proportional}
 
-A estratégia proporcional utiliza o mesmo estimador $\hat{N}_r$ da estratégia flat, mas aplica um multiplicador que escala linearmente com o preenchimento do tabuleiro:
+A estratégia proporcional utiliza o mesmo estimador $\hat{N}_r$ da estratégia flat, mas aplica um multiplicador que escala linearmente com o preenchimento do tabuleiro (Equação~\ref{eq:proportional_impl}):
 
 \begin{equation}
     \rho = 1 - \frac{|\text{células vazias}|}{15^2}, \qquad
     \mu_{\text{prop}} = 0{,}8 + 0{,}4 \cdot \rho
 \label{eq:proportional_impl}
 \end{equation}
+
+O tempo alocado ao lance é então:
 
 \begin{equation}
     t_i = \mu_{\text{prop}} \cdot \frac{T_r}{\hat{N}_r}
@@ -669,12 +684,14 @@ Com tabuleiro vazio ($\rho = 0$), o multiplicador vale $0{,}8$ — ligeiramente 
 \subsection{Estratégia por Fase}
 \label{sec:impl_phase}
 
-A estratégia por fase utiliza o mesmo $\hat{N}_r$ da estratégia flat e determina a fase do jogo pela fração de preenchimento do tabuleiro:
+A estratégia por fase utiliza o mesmo $\hat{N}_r$ da estratégia flat e determina a fase do jogo pela fração de preenchimento do tabuleiro (Equação~\ref{eq:fill_progress}):
 
 \begin{equation}
     p = 1 - \frac{|\text{células vazias}|}{15^2}
 \label{eq:fill_progress}
 \end{equation}
+
+A partir de $p$, a fase é determinada por limiares fixos:
 
 \begin{equation}
     \text{fase}(p) =
@@ -690,7 +707,7 @@ Os multiplicadores aplicados sobre $T_r / \hat{N}_r$ são $\mu_{\text{abertura}}
 \subsection{Estratégia Crítica}
 \label{sec:impl_critical}
 
-A estratégia crítica utiliza o mesmo $\hat{N}_r$ da estratégia flat e detecta ameaças de 4-em-linha com ao menos uma extremidade aberta para qualquer um dos dois jogadores. A detecção percorre as quatro direções (horizontal, vertical, diagonal principal, diagonal secundária) e verifica, para cada sequência de comprimento $\geq 4$, se a célula imediatamente anterior ou posterior está vazia:
+A estratégia crítica utiliza o mesmo $\hat{N}_r$ da estratégia flat e detecta ameaças de 4-em-linha com ao menos uma extremidade aberta para qualquer um dos dois jogadores. A detecção percorre as quatro direções (horizontal, vertical, diagonal principal, diagonal secundária) e verifica, para cada sequência de comprimento $\geq 4$, se a célula imediatamente anterior ou posterior está vazia (Equação~\ref{eq:critical_impl}):
 
 \begin{equation}
     t_i =
@@ -709,7 +726,7 @@ O fator de desconto $0{,}9$ nos lances não críticos compensa o orçamento extr
 
 O script \texttt{run\_duel.py} executa $N$ partidas entre dois agentes MCTS com estratégias de tempo distintas. Para controlar o viés do primeiro movimento, as cores são alternadas a cada partida: na partida par, a estratégia em avaliação joga com as peças pretas; na partida ímpar, joga com as brancas.
 
-A cada lance, o runner registra quatro métricas: tempo alocado pela política ($t_i^{\text{eff}}$), tempo efetivamente consumido pelo MCTS, tempo restante após o lance e o movimento escolhido. Ao final de todas as partidas, os resultados são serializados em JSON com três seções:
+A cada lance, o \emph{runner} registra quatro métricas: tempo alocado pela política ($t_i^{\text{eff}}$), tempo efetivamente consumido pelo MCTS, tempo restante após o lance e o movimento escolhido. Ao final de todas as partidas, os resultados são serializados em JSON com três seções:
 
 \begin{itemize}
     \item \texttt{config}: todos os parâmetros da execução (estratégias, orçamento, número de partidas), garantindo reprodutibilidade.
@@ -731,7 +748,7 @@ Este capítulo apresenta e analisa os resultados dos experimentos de torneio des
 \section{Configuração Experimental}
 \label{sec:exp_setup}
 
-Cada estratégia foi avaliada em um torneio de $N = 400$ partidas contra o baseline flat, com orçamento de 60 segundos por jogador por partida. Para controlar o viés do primeiro movimento — Black possui vantagem estrutural em Gomoku, conforme discutido na Seção~\ref{sec:gomoku_rules} — as 400 partidas foram divididas igualmente entre as duas cores: 200 partidas com a estratégia em avaliação jogando como Black e 200 como White.
+Cada estratégia foi avaliada em um torneio de $N = 400$ partidas contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador por partida. Para controlar o viés do primeiro movimento — Black possui vantagem estrutural em Gomoku, conforme discutido na Seção~\ref{sec:gomoku_rules} — as 400 partidas foram divididas igualmente entre as duas cores: 200 partidas com a estratégia em avaliação jogando como Black e 200 como White.
 
 \textbf{Metodologia estatística.} O resultado de cada partida é modelado como uma variável de Bernoulli: vitória (1) ou derrota (0). Para cada estratégia, estimou-se a taxa de vitórias $\hat{p} = w / N$ e construiu-se um intervalo de confiança de 95\% pela aproximação normal:
 
@@ -740,7 +757,7 @@ Cada estratégia foi avaliada em um torneio de $N = 400$ partidas contra o basel
 \label{eq:ci}
 \end{equation}
 
-A hipótese nula $H_0\colon p = 0{,}5$ — a estratégia tem a mesma taxa de vitórias que o baseline — foi testada pelo escore $z$:
+A hipótese nula $H_0\colon p = 0{,}5$ — a estratégia tem a mesma taxa de vitórias que o \emph{baseline} — foi testada pelo escore $z$:
 
 \begin{equation}
     z = \frac{\hat{p} - 0{,}5}{\sqrt{0{,}25/N}}
@@ -778,7 +795,7 @@ A Tabela~\ref{tab:results_main} apresenta as taxas de vitórias de cada estraté
     \end{tabular}
 \end{table}
 
-Os resultados dividem-se em três categorias distintas: a estratégia crítica supera significativamente o baseline; a estratégia por fase é significativamente inferior; e a estratégia proporcional é indistinguível do baseline. A Figura~\ref{fig:results_winrates} ilustra essa comparação visualmente.
+Os resultados dividem-se em três categorias distintas: a estratégia crítica supera significativamente o \emph{baseline}; a estratégia por fase é significativamente inferior; e a estratégia proporcional é indistinguível do \emph{baseline}. A Figura~\ref{fig:results_winrates} ilustra essa comparação visualmente.
 
 \begin{figure}[htbp]
     \centering
@@ -858,16 +875,16 @@ A simetria observada na estratégia crítica — 61,5\% como Black e 62,0\% como
 \subsection{Limitações}
 \label{sec:discussion_limitations}
 
-Os experimentos apresentam algumas limitações que devem ser consideradas na interpretação dos resultados. Primeiro, o único baseline utilizado foi a estratégia flat; comparações diretas entre as estratégias propostas não foram realizadas, o que impede afirmações sobre ordenação relativa entre elas. Segundo, todos os experimentos utilizaram um único orçamento de 60 segundos por jogador; resultados podem diferir com orçamentos distintos, particularmente para a estratégia crítica, cujo ganho depende da frequência de ameaças detectadas. Terceiro, ambos os agentes utilizam o mesmo motor MCTS; contra agentes com capacidades de busca diferentes, os efeitos das estratégias de tempo podem variar. Por fim, os resultados são específicos ao Gomoku; domínios com estrutura tática distinta podem apresentar padrões diferentes de resposta às estratégias de alocação. Uma direção natural de trabalho futuro é estender o sistema a outros jogos de tabuleiro — como Go ou Hex — e a outros agentes de busca, explorando se o ganho da estratégia crítica se generaliza para domínios com padrões táticos diferentes, e se a arquitetura extensível proposta facilita essa comparação.
+Os experimentos apresentam algumas limitações que devem ser consideradas na interpretação dos resultados. Primeiro, o único \emph{baseline} utilizado foi a estratégia flat; comparações diretas entre as estratégias propostas não foram realizadas, o que impede afirmações sobre ordenação relativa entre elas. Segundo, todos os experimentos utilizaram um único orçamento de 60 segundos por jogador; resultados podem diferir com orçamentos distintos, particularmente para a estratégia crítica, cujo ganho depende da frequência de ameaças detectadas. Terceiro, ambos os agentes utilizam o mesmo motor MCTS; contra agentes com capacidades de busca diferentes, os efeitos das estratégias de tempo podem variar. Por fim, os resultados são específicos ao Gomoku; domínios com estrutura tática distinta podem apresentar padrões diferentes de resposta às estratégias de alocação. Uma direção natural de trabalho futuro é estender o sistema a outros jogos de tabuleiro — como Go ou Hex — e a outros agentes de busca, explorando se o ganho da estratégia crítica se generaliza para domínios com padrões táticos diferentes, e se a arquitetura extensível proposta facilita essa comparação.
 
 % -----------------------------------------------------------------------
 % CAPÍTULO 6 — Conclusão
 % -----------------------------------------------------------------------
 \chapter{Conclusão}
 
-O Monte Carlo Tree Search é, por natureza, um algoritmo \emph{anytime}: dado mais tempo, produz decisões de maior qualidade. Em contextos competitivos com orçamento fixo por partida, porém, esse recurso é finito e deve ser distribuído entre todos os lances. A questão investigada neste trabalho é se — e como — a qualidade dessa distribuição influencia a taxa de vitórias: alocar tempo de forma desigual, concentrando-o nos momentos mais importantes da partida, traz ganho mensurável em relação à alocação uniforme?
+O MCTS é, por natureza, um algoritmo \emph{anytime}: dado mais tempo, produz decisões de maior qualidade. Em contextos competitivos com orçamento fixo por partida, porém, esse recurso é finito e deve ser distribuído entre todos os lances. A questão investigada neste trabalho é se — e como — a qualidade dessa distribuição influencia a taxa de vitórias: alocar tempo de forma desigual, concentrando-o nos momentos mais importantes da partida, traz ganho mensurável em relação à alocação uniforme?
 
-Para responder a essa questão, foram propostas e implementadas quatro estratégias de alocação de tempo sobre um agente MCTS aplicado ao Gomoku: a uniforme (\emph{flat}), que serve como baseline; a proporcional, que escala a alocação com o preenchimento do tabuleiro; a por fase, que aplica multiplicadores distintos conforme a fase do jogo; e a crítica, que detecta ameaças táticas imediatas e dobra o tempo alocado nesses lances. As estratégias foram comparadas em um torneio controlado de 400 partidas por estratégia contra o baseline flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
+Para responder a essa questão, foram propostas e implementadas quatro estratégias de alocação de tempo sobre um agente MCTS aplicado ao Gomoku: a uniforme (\emph{flat}), que serve como \emph{baseline}; a proporcional, que escala a alocação com o preenchimento do tabuleiro; a por fase, que aplica multiplicadores distintos conforme a fase do jogo; e a crítica, que detecta ameaças táticas imediatas e dobra o tempo alocado nesses lances. As estratégias foram comparadas em um torneio controlado de 400 partidas por estratégia contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
 
 Os resultados dividem-se em três padrões distintos. A estratégia crítica obteve 61,8\% de vitórias ($z = +4{,}70$, $p < 0{,}001$), resultado consistente entre as duas cores (61,5\% como Black, 62,0\% como White). Notavelmente, o mecanismo de detecção de ameaças foi ativado em apenas 16,4\% dos lances — o suficiente para reverter completamente a desvantagem estrutural do jogador branco. A estratégia por fase obteve 40,2\% de vitórias ($z = -3{,}90$, $p < 0{,}001$), sendo significativamente inferior ao baseline: o multiplicador elevado no meio do jogo esgota o orçamento antes dos lances decisivos do final, penalizando especialmente o jogador branco (36,0\%). A estratégia proporcional, com 52,2\% ($p = 0{,}37$), é estatisticamente indistinguível do flat — a redistribuição real é mais tênue do que o projeto sugere, pois o multiplicador permanece abaixo de 1,0 na maior parte da partida.
 
