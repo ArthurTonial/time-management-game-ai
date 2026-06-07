@@ -41,6 +41,7 @@
 
 \usepackage[alf,abnt-emphasize=bf]{abntex2cite}	% pacote para usar citações abnt
 \usepackage{amsmath}          % pacote para equações (cases, align, etc.)
+\usepackage{amssymb}          % pacote para símbolos matemáticos (\mathbb, etc.)
 
 %
 % Informações gerais
@@ -526,7 +527,7 @@ A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. A estratégi
     \end{tabular}
 \end{table}
 
-Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca exatamente $T_r / \hat{N}_r$ por lance. A proporcional varia entre $0{,}8$ e $1{,}2$ vezes esse valor, mantendo o orçamento global próximo ao flat em média. As estratégias por fase e crítica introduzem multiplicadores mais amplos (até $1{,}5\times$ e $2{,}0\times$, respectivamente) que podem consumir uma fração desproporcional do orçamento se ativados frequentemente — o que motiva a inclusão de fatores de desconto ($\mu < 1$) nos lances não críticos para manter o balanço orçamentário ao longo da partida.
+Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca exatamente $T_r / \hat{N}_r$ por lance. A proporcional varia entre $0{,}8$ e $1{,}2$ vezes esse valor, mantendo o orçamento global próximo ao flat em média. As estratégias por fase e crítica introduzem multiplicadores mais amplos (até $1{,}5\times$ e $2{,}0\times$, respectivamente) que podem consumir uma fração desproporcional do orçamento se ativados frequentemente — o que motiva a inclusão de fatores de desconto ($\mu < 1$) nos lances não críticos para manter o balanço orçamentário ao longo da partida. A Figura~\ref{fig:time_profiles} ilustra o perfil de alocação de cada estratégia ao longo de uma partida representativa.
 
 \begin{figure}[htbp]
     \centering
