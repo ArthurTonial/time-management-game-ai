@@ -159,7 +159,7 @@ Este trabalho foca exclusivamente em agentes baseados em MCTS sem aprendizado de
 
 O MCTS foi amplamente estudado sob diferentes ângulos: a formulação do critério de seleção UCT \cite{kocsis2006bandit}, variantes de expansão e simulação(\emph{rollout}), e aplicações a domínios além dos jogos \cite{browne2012survey}. Uma dimensão prática, porém, recebeu atenção comparativamente limitada: o gerenciamento de tempo por lance.
 
-Em partidas competitivas, o orçamento de tempo total por jogador é fixo e deve ser distribuído entre todos os lances da partida. Como o MCTS é um algoritmo \emph{anytime} — pode ser interrompido a qualquer momento e retorna o melhor movimento encontrado até então — o tempo disponível por turno é o recurso natural de controle: mais tempo implica mais iterações, estimativas mais precisas e decisões de maior qualidade. A questão que se coloca é como distribuir esse orçamento de forma eficaz ao longo de uma partida.
+Em partidas competitivas, o orçamento de tempo total por jogador é fixo e deve ser distribuído entre todos os lances da partida. Como o MCTS é um algoritmo \emph{anytime} — pode ser interrompido a qualquer momento e retorna o melhor movimento encontrado até então — o tempo disponível por turno é o recurso natural de controle: mais tempo implica mais iterações e, em geral, estimativas mais precisas e decisões de maior qualidade. A questão que se coloca é como distribuir esse orçamento de forma eficaz ao longo de uma partida.
 
 A estratégia mais simples — dividir o tempo restante igualmente entre os movimentos estimados — é também a mais comum na prática \cite{browne2012survey}. Ela ignora, porém, que nem todos os lances têm a mesma importância: posições com ameaças táticas imediatas são fatais se mal respondidas, enquanto lances de abertura com tabuleiro esparso tendem a ter consequências mais difusas. Investir tempo adicional nos momentos críticos e economizar nos demais poderia, em teoria, aumentar a qualidade agregada das decisões sem alterar o orçamento total. Essa lacuna motiva o presente trabalho.
 
@@ -308,7 +308,7 @@ A adaptação do UCB1 para árvores de jogo, denominada UCT, consiste em aplicar
 \subsection{MCTS como algoritmo \emph{anytime}}
 \label{sec:mcts_anytime}
 
-Uma propriedade fundamental do MCTS é sua natureza \emph{anytime}: o algoritmo pode ser interrompido a qualquer momento e retorna uma resposta válida — o movimento mais visitado até então. A qualidade da resposta melhora monotonicamente com o número de iterações: mais simulações implicam estimativas de valor mais precisas e maior profundidade efetiva de busca.
+Uma propriedade fundamental do MCTS é sua natureza \emph{anytime}: o algoritmo pode ser interrompido a qualquer momento e retorna uma resposta válida — o movimento mais visitado até então. Em geral, a qualidade da resposta tende a melhorar com o número de iterações: mais simulações produzem estimativas de valor mais precisas e maior profundidade efetiva de busca. Essa relação não é, porém, garantida em toda configuração — ela depende da política de \emph{rollout}, da constante de exploração e da estrutura do espaço de busca.
 
 Essa propriedade contrasta diretamente com o Minimax com profundidade fixa, que somente fornece resultado ao completar a busca até a profundidade estipulada. No MCTS, o recurso natural de controle é o tempo disponível: dado um orçamento de $T$ segundos por turno, o algoritmo executa o maior número possível de iterações dentro desse limite. Como a taxa de melhoria decresce com o número de iterações (retornos marginais decrescentes), a questão de como distribuir o orçamento total de tempo entre os movimentos de uma partida torna-se relevante — e é precisamente o problema abordado neste trabalho.
 
@@ -394,9 +394,9 @@ Este capítulo apresenta a proposta do trabalho. A Seção~\ref{sec:problem} for
 \subsection{Qualidade de decisão e tempo no MCTS}
 \label{sec:quality_time}
 
-O ponto de partida é a propriedade \emph{anytime} do MCTS (Seção~\ref{sec:mcts_anytime}): dado um prazo $t_i$ segundos para o lance $i$, o agente executa o maior número possível de iterações dentro desse limite e retorna o movimento mais visitado. A qualidade da decisão é uma função crescente do tempo disponível — mais iterações implicam estimativas de valor mais precisas e maior profundidade efetiva de busca. Contudo, essa função não é linear: os ganhos de precisão seguem uma lei de retornos decrescentes. As primeiras iterações eliminam incerteza mais rapidamente, pois amostreiam regiões do espaço de busca ainda completamente desconhecidas. À medida que certas linhas de jogo acumulam visitas, iterações adicionais refinam estimativas já razoáveis, contribuindo cada vez menos para a qualidade da decisão final.
+O ponto de partida é a propriedade \emph{anytime} do MCTS (Seção~\ref{sec:mcts_anytime}): dado um prazo $t_i$ segundos para o lance $i$, o agente executa o maior número possível de iterações dentro desse limite e retorna o movimento mais visitado. Assume-se que a qualidade da decisão é uma função crescente do tempo disponível — mais iterações produzem estimativas de valor mais precisas e maior profundidade efetiva de busca. Adicionalmente, modela-se essa função como côncava: os ganhos de precisão tendem a ser decrescentes, pois as primeiras iterações amostreiam regiões do espaço de busca ainda completamente desconhecidas, enquanto iterações adicionais refinam estimativas já razoáveis, contribuindo cada vez menos para a qualidade da decisão final. Embora a concavidade de $Q(t)$ seja uma simplificação — a relação real depende da estrutura do espaço de busca, da política de \emph{rollout} e da constante de exploração —, ela é consistente com resultados empíricos na literatura \cite{browne2012survey} e serve como motivação teórica para o problema de alocação.
 
-Essa característica tem uma consequência direta para o problema de alocação: redistribuir tempo de posições de baixo retorno marginal para posições de alto retorno marginal pode aumentar a qualidade agregada das decisões sem alterar o orçamento total. Formalmente, se $Q(t)$ denota a qualidade esperada de uma decisão com $t$ segundos de busca, e se $Q$ é côncava (retornos decrescentes), então para dois lances $i$ e $j$ com importâncias distintas $v_i > v_j$, alocar mais tempo ao lance $i$ e menos ao $j$ pode aumentar $v_i \cdot Q(t_i) + v_j \cdot Q(t_j)$ em relação à alocação uniforme — desde que a diferença de importância seja suficientemente grande para compensar a concavidade de $Q$.
+Essa característica tem uma consequência direta para o problema de alocação: redistribuir tempo de posições de baixo retorno marginal para posições de alto retorno marginal pode aumentar a qualidade agregada das decisões sem alterar o orçamento total. Formalmente, se $Q(t)$ denota a qualidade esperada de uma decisão com $t$ segundos de busca, e se assumirmos que $Q$ é côncava (retornos decrescentes), então para dois lances $i$ e $j$ com importâncias distintas $v_i > v_j$, alocar mais tempo ao lance $i$ e menos ao $j$ pode aumentar $v_i \cdot Q(t_i) + v_j \cdot Q(t_j)$ em relação à alocação uniforme — desde que a diferença de importância seja suficientemente grande para compensar a concavidade de $Q$.
 
 O argumento acima é a motivação central deste trabalho: se algumas posições do Gomoku têm $v_i \gg v_j$ — isto é, errar nelas é muito mais custoso do que errar em outras —, então uma política de alocação que identifique e priorize essas posições pode superar a alocação uniforme em taxa de vitórias. As estratégias propostas na Seção~\ref{sec:strategies} operacionalizam diferentes critérios para estimar essa importância relativa.
 
@@ -504,6 +504,8 @@ A estratégia crítica opera no nível do lance individual: a cada turno, avalia
 
 A hipótese central dessa estratégia é que erros em posições com ameaça de 4-em-linha aberta são imediatamente fatais: o agente que não bloqueia ou não completa a sequência perde a partida no lance seguinte. Nessas posições, investir tempo adicional tem retorno esperado muito superior à média, pois reduz diretamente a probabilidade de um erro irreparável. A detecção de ameaças funciona como um sinal de alta informatividade que o agente usa para redistribuir o orçamento de forma reativa.
 
+A escolha do 4-em-linha aberto como sinal de detecção — em detrimento de outros padrões táticos relevantes no Gomoku, como o duplo-três — baseia-se em dois critérios. Primeiro, \textbf{imediaticidade}: uma ameaça de 4-em-linha aberta exige resposta obrigatória no lance imediatamente seguinte; ignorá-la resulta em derrota certa, tornando a posição inequivocamente crítica. O duplo-três, embora force vitória a médio prazo, oferece ao oponente ao menos um lance adicional de resposta, tornando sua criticidade menos imediata e o sinal menos preciso. Segundo, \textbf{simplicidade da política}: o objetivo desta estratégia não é construir um detector tático completo, mas sim avaliar se um sinal posicional simples e de alta precisão é suficiente para produzir ganho mensurável em taxa de vitórias. Ampliar a detecção para padrões adicionais aumentaria a complexidade da política sem isolar o efeito do sinal escolhido — dificultando a interpretação dos resultados. A extensão da detecção para padrões como o duplo-três permanece como direção natural de trabalho futuro (Seção~\ref{sec:discussion_limitations}).
+
 \subsection{Comparação entre as estratégias}
 \label{sec:strategies_comparison}
 
@@ -528,6 +530,33 @@ A Tabela~\ref{tab:strategies_comparison} sumariza essas dimensões. A estratégi
 \end{table}
 
 Do ponto de vista de risco orçamentário, flat é a mais conservadora: aloca exatamente $T_r / \hat{N}_r$ por lance. A proporcional varia entre $0{,}8$ e $1{,}2$ vezes esse valor, mantendo o orçamento global próximo ao flat em média. As estratégias por fase e crítica introduzem multiplicadores mais amplos (até $1{,}5\times$ e $2{,}0\times$, respectivamente) que podem consumir uma fração desproporcional do orçamento se ativados frequentemente — o que motiva a inclusão de fatores de desconto ($\mu < 1$) nos lances não críticos para manter o balanço orçamentário ao longo da partida. A Figura~\ref{fig:time_profiles} ilustra o perfil de alocação de cada estratégia ao longo de uma partida representativa.
+
+A Tabela~\ref{tab:parameters} centraliza todos os parâmetros numéricos das estratégias, com os valores utilizados nos experimentos e a motivação para cada escolha.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Parâmetros das estratégias de alocação de tempo e valores utilizados nos experimentos.}
+    \label{tab:parameters}
+    \begin{tabular}{llrp{5.5cm}}
+        \hline
+        \textbf{Estratégia} & \textbf{Parâmetro} & \textbf{Valor} & \textbf{Motivação} \\
+        \hline
+        Todas       & $N_{\text{const}}$         & 75       & Margem acima da duração média observada (52 lances/jogador) \\
+        \hline
+        Proporcional & $\mu_{\text{min}}$         & 0,80     & Desconto na abertura (tabuleiro esparso) \\
+                    & $\mu_{\text{max}}$         & 1,20     & Bônus no final (menor ramificação) \\
+        \hline
+        Por Fase    & $\mu_{\text{abertura}}$    & 1,20     & Leve bônus para evitar erros posicionais iniciais \\
+                    & $\mu_{\text{meio}}$        & 1,50     & Fase com maior densidade de ameaças táticas \\
+                    & $\mu_{\text{final}}$       & 0,55     & Desconto para compensar gasto extra nas fases anteriores \\
+                    & Limiar abertura/meio       & $p = 0{,}10$ & Primeiros $\approx$10\% de preenchimento ($\approx$12 lances) \\
+                    & Limiar meio/final          & $p = 0{,}45$ & Próximo ao preenchimento máximo observado na maioria das partidas \\
+        \hline
+        Crítica     & $\mu_{\text{crit}}$        & 2,00     & Dobrar o tempo em posições forçadas \\
+                    & $\mu_{\text{normal}}$      & 0,90     & Desconto leve para compensar os picos críticos \\
+        \hline
+    \end{tabular}
+\end{table}
 
 \begin{figure}[htbp]
     \centering
@@ -844,6 +873,10 @@ A assimetria entre as cores reforça essa interpretação. White joga os lances 
 
 O resultado aponta uma limitação de design: a hipótese motivadora da estratégia por fase — que o meio do jogo concentra as decisões mais consequentes — é plausível, mas o desconto de final de 0,55$\times$ acaba penalizando os lances decisivos em vez de preservar orçamento para eles. Um refinamento natural seria reduzir esse desconto ou substituir o limiar fixo de preenchimento pelo número de lances restantes estimados, desacoplando a classificação de fase do ritmo real de cada partida.
 
+Há, porém, uma limitação mais profunda que vai além dos parâmetros escolhidos: \textbf{a fase do jogo é um proxy fraco para a criticidade tática de um lance individual}. A estratégia por fase assume que a importância de um lance é determinada principalmente pela fase global da partida — abertura, meio do jogo ou final. Essa suposição ignora que a criticidade é essencialmente \emph{local}: uma ameaça de 4-em-linha pode emergir no lance 8 (abertura) ou no lance 60 (final), independentemente do preenchimento médio do tabuleiro. Da mesma forma, muitos lances de meio do jogo são posicionais, sem ameaças táticas imediatas, e não se beneficiam de tempo adicional da mesma forma que uma posição forçada.
+
+Em outras palavras, a estratégia por fase investe mais tempo nos lances do meio do jogo \emph{em média}, mas sem discriminar quais lances do meio do jogo são genuinamente críticos. Ao redistribuir tempo de forma agregada por fase, ela inevitavelmente alocará mais tempo a lances de baixa urgência (e.g., jogadas posicionais de médio prazo) e, ao mesmo tempo, não garantirá recursos suficientes para lances críticos que ocorrem fora da janela de fase privilegiada. O contraste com a estratégia crítica é revelador: ao reagir ao estado local do tabuleiro em vez de à fase global, a estratégia crítica consegue concentrar o orçamento exatamente nos lances em que ele tem maior retorno esperado.
+
 \subsection{Estratégia Proporcional}
 \label{sec:results_proportional}
 
@@ -863,6 +896,17 @@ A redistribuição de tempo é, portanto, mais tênue na prática do que na inte
 Os três resultados formam um padrão coerente à luz das hipóteses do Capítulo~\ref{chap:proposal}. A estratégia com sinal de maior especificidade — a crítica, que detecta padrões posicionais concretos — é a única que produz ganho mensurável. A estratégia com sinal de especificidade intermediária — a por fase, que classifica o estado em regiões ordinais de importância — produz redistribuição de tempo mas com efeito adverso por conta da miscalibração do desconto de final. A estratégia com sinal mais fraco — a proporcional, com contagem agregada de peças — é neutra.
 
 Esse gradiente sugere que, neste domínio e com este orçamento de tempo, \textbf{a qualidade do sinal de alocação importa mais do que o volume total de tempo redistribuído}. A estratégia crítica usa um sinal binário aplicado a apenas 16\% dos lances — mecanismo simples, mas altamente informativo. A estratégia por fase distribui o orçamento de forma mais contínua mas com menor acurácia na identificação dos lances decisivos.
+
+\subsection{Por que a estratégia crítica funciona}
+\label{sec:discussion_critical}
+
+O desempenho da estratégia crítica pode ser interpretado à luz de três conceitos complementares.
+
+\textbf{Gargalos táticos e alocação seletiva de recursos.} Em jogos com ameaças forçadas, a qualidade da partida não é determinada pela média das decisões, mas pelos erros nos momentos de maior consequência. Um único lance mal respondido em uma posição de 4-em-linha aberta encerra a partida independentemente de quantas decisões anteriores foram de alta qualidade. Isso configura um gargalo tático: a distribuição de impacto dos lances é altamente assimétrica, com uma minoria de posições concentrando a maior parte do risco de derrota. A alocação seletiva de recursos — concentrar orçamento computacional nos gargalos — é precisamente o mecanismo que a estratégia crítica explora.
+
+\textbf{Valor da informação e precisão do sinal.} Na perspectiva da teoria da decisão, o valor de investir tempo adicional em um lance é proporcional à probabilidade de que esse tempo altere a decisão tomada e ao impacto dessa mudança no resultado final. Em posições não críticas, o MCTS com orçamento flat já identifica o movimento correto com alta confiança — iterações adicionais têm baixo valor de informação. Em posições com ameaça de 4-em-linha, a probabilidade de erro sem tempo suficiente é não negligenciável, e o custo de um erro é máximo (derrota imediata). O sinal binário da estratégia crítica captura exatamente essa assimetria: ele não tenta estimar o valor de cada lance, apenas identifica quando o valor da informação adicional é excepcionalmente alto.
+
+\textbf{Precisão versus cobertura do sinal.} A eficácia do sinal depende não apenas de detectar posições críticas, mas de não ativar o multiplicador em posições de baixa urgência. Um sinal de baixa precisão diluiria o orçamento extra e aproximaria a estratégia do comportamento da estratégia por fase. O 4-em-linha aberto é um sinal de alta precisão: cada ativação corresponde a uma posição genuinamente forçada. Isso explica por que uma taxa de ativação de apenas 16,4\% é suficiente para produzir ganho de 11,8 pontos percentuais — cada unidade de orçamento extra é investida exatamente onde tem maior retorno esperado.
 
 \subsection{O efeito da cor na estratégia crítica}
 \label{sec:discussion_color}
