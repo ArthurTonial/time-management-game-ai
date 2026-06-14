@@ -96,9 +96,9 @@ O Monte Carlo Tree Search (MCTS) é um algoritmo \emph{anytime} para jogos: dado
 
 Este trabalho propõe e compara quatro estratégias de alocação de tempo por lance aplicadas a um agente MCTS no Gomoku 15×15: (i) uniforme (\emph{flat}), utilizada como \emph{baseline}; (ii) proporcional, que escala a alocação com o preenchimento do tabuleiro; (iii) por fase, que aplica multiplicadores distintos na abertura, meio do jogo e final; e (iv) crítica, que detecta ameaças de 4-em-linha aberta e dobra o tempo alocado nesses lances. Cada estratégia foi avaliada em torneios de 400 partidas contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
 
-A estratégia crítica obteve 61,8\% de vitórias ($p < 0{,}001$), superando o \emph{baseline} de forma consistente em ambas as cores e revertendo completamente a desvantagem estrutural do jogador branco. A estratégia por fase obteve 40,2\% ($p < 0{,}001$), sendo significativamente inferior ao \emph{baseline}: o excesso de tempo investido no meio do jogo esgota o orçamento antes dos lances decisivos do final. A estratégia proporcional obteve 52,2\% ($p = 0{,}37$), resultado estatisticamente indistinguível do \emph{baseline}.
+A estratégia crítica obteve 61,8\% de vitórias ($p < 0{,}001$), superando o \emph{baseline} de forma consistente em ambas as cores. A estratégia por fase obteve 40,2\% ($p < 0{,}001$), sendo significativamente inferior ao \emph{baseline}: o excesso de tempo investido no meio do jogo esgota o orçamento antes dos lances decisivos do final. A estratégia proporcional obteve 52,2\% ($p = 0{,}37$), resultado estatisticamente indistinguível do \emph{baseline}.
 
-O achado central é que a qualidade do sinal de alocação importa mais do que o volume de tempo redistribuído. A estratégia crítica, com um sinal binário simples ativado em apenas 16\% dos lances, superou estratégias que redistribuem tempo de forma mais contínua ao longo da partida. A hipótese do trabalho é confirmada parcialmente: alocação inteligente supera o \emph{baseline} quando o sinal utilizado é específico e preciso o suficiente.
+O achado central é que a qualidade do sinal de alocação importa mais do que o volume de tempo redistribuído. A estratégia crítica, com um sinal binário simples ativado em apenas 20\% dos lances, superou estratégias que redistribuem tempo de forma mais contínua ao longo da partida. A hipótese do trabalho é confirmada parcialmente: alocação inteligente supera o \emph{baseline} quando o sinal utilizado é específico e preciso o suficiente.
 \end{abstract}
 
 % resumo na outra língua
@@ -107,9 +107,9 @@ Monte Carlo Tree Search (MCTS) is an anytime algorithm for games: given more tim
 
 This work proposes and compares four per-move time allocation strategies applied to an MCTS agent in 15×15 Gomoku: (i) uniform (flat), used as baseline; (ii) proportional, scaling allocation with board fill ratio; (iii) phase-based, applying distinct multipliers for the opening, midgame, and endgame; and (iv) critical, detecting open four-in-a-row threats and doubling the time allocated to those moves. Each strategy was evaluated in tournaments of 400 games against the flat baseline, with a budget of 60 seconds per player and color alternation to control the first-move advantage.
 
-The critical strategy achieved 61.8\% wins ($p < 0.001$), consistently outperforming the baseline in both colors and fully reversing the structural disadvantage of the White player. The phase strategy achieved 40.2\% wins ($p < 0.001$), performing significantly worse than the baseline: overspending in the midgame depletes the budget before the decisive endgame moves. The proportional strategy achieved 52.2\% wins ($p = 0.37$), statistically indistinguishable from the baseline.
+The critical strategy achieved 61.8\% wins ($p < 0.001$), consistently outperforming the baseline in both colors. The phase strategy achieved 40.2\% wins ($p < 0.001$), performing significantly worse than the baseline: overspending in the midgame depletes the budget before the decisive endgame moves. The proportional strategy achieved 52.2\% wins ($p = 0.37$), statistically indistinguishable from the baseline.
 
-The central finding is that the quality of the allocation signal matters more than the volume of time redistributed. The critical strategy, using a simple binary signal activated on only 16\% of moves, outperformed strategies that redistribute time continuously throughout the game. The work's hypothesis is partially confirmed: intelligent allocation outperforms the baseline when the signal is specific and precise enough.
+The central finding is that the quality of the allocation signal matters more than the volume of time redistributed. The critical strategy, using a simple binary signal activated on only 20\% of moves, outperformed strategies that redistribute time continuously throughout the game. The work's hypothesis is partially confirmed: intelligent allocation outperforms the baseline when the signal is specific and precise enough.
 \end{englishabstract}
 
 % lista de figuras
@@ -774,7 +774,7 @@ Este capítulo apresenta e analisa os resultados dos experimentos de torneio des
 \section{Configuração Experimental}
 \label{sec:exp_setup}
 
-Cada estratégia foi avaliada em um torneio de $N = 400$ partidas contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador por partida. Para controlar o viés do primeiro movimento — Black possui vantagem estrutural em Gomoku, conforme discutido na Seção~\ref{sec:gomoku_rules} — as 400 partidas foram divididas igualmente entre as duas cores: 200 partidas com a estratégia em avaliação jogando como Black e 200 como White.
+Cada estratégia foi avaliada em torneios de $N = 400$ partidas contra o \emph{baseline} flat em três orçamentos de tempo distintos: 30, 60 e 120 segundos por jogador por partida. Para controlar o viés do primeiro movimento — Black possui vantagem estrutural em Gomoku, conforme discutido na Seção~\ref{sec:gomoku_rules} — as 400 partidas de cada configuração foram divididas igualmente entre as duas cores: 200 partidas com a estratégia em avaliação jogando como Black e 200 como White. O orçamento de 60 segundos constitui o experimento principal; os orçamentos de 30 e 120 segundos foram conduzidos para avaliar a robustez dos resultados a variações no recurso computacional disponível. No total, foram realizadas 3600 partidas de torneio.
 
 \textbf{Metodologia estatística.} O resultado de cada partida é modelado como uma variável de Bernoulli: vitória (1) ou derrota (0). Para cada estratégia, estimou-se a taxa de vitórias $\hat{p} = w / N$ e construiu-se um intervalo de confiança de 95\% pela aproximação normal:
 
@@ -790,17 +790,17 @@ A hipótese nula $H_0\colon p = 0{,}5$ — a estratégia tem a mesma taxa de vit
 \label{eq:ztest}
 \end{equation}
 
-Não foram observados empates em nenhuma das 1200 partidas realizadas, o que é consistente com a propriedade do Gomoku de que o jogo ótimo resulta sempre em vitória do primeiro jogador \cite{allis1994searching}.
+Não foram observados empates em nenhuma das 3600 partidas realizadas, o que é consistente com a propriedade do Gomoku de que o jogo ótimo resulta sempre em vitória do primeiro jogador \cite{allis1994searching}.
 
 % ---
 \section{Visão Geral dos Resultados}
 \label{sec:results_overview}
 
-A Tabela~\ref{tab:results_main} apresenta as taxas de vitórias de cada estratégia, desagregadas por cor e no total, com os respectivos intervalos de confiança e estatísticas de teste.
+A Tabela~\ref{tab:results_main} apresenta as taxas de vitórias de cada estratégia no experimento principal (60 segundos), desagregadas por cor e no total, com os respectivos intervalos de confiança e estatísticas de teste.
 
 \begin{table}[htbp]
     \centering
-    \caption{Taxas de vitórias das estratégias contra o baseline flat ($N = 400$ partidas por estratégia, 200 por cor). IC: intervalo de confiança de 95\%. Significância: *** $p < 0{,}001$, ** $p < 0{,}01$, n.s.\ não significativo.}
+    \caption{Taxas de vitórias das estratégias contra o baseline flat, experimento principal com orçamento de 60 s ($N = 400$ partidas por estratégia, 200 por cor). IC: intervalo de confiança de 95\%. Significância: *** $p < 0{,}001$, ** $p < 0{,}01$, n.s.\ não significativo.}
     \label{tab:results_main}
     \begin{tabular}{llrrrlr}
         \hline
@@ -823,6 +823,23 @@ A Tabela~\ref{tab:results_main} apresenta as taxas de vitórias de cada estraté
 
 Os resultados dividem-se em três categorias distintas: a estratégia crítica supera significativamente o \emph{baseline}; a estratégia por fase é significativamente inferior; e a estratégia proporcional é indistinguível do \emph{baseline}. A Figura~\ref{fig:results_winrates} ilustra essa comparação visualmente.
 
+A Tabela~\ref{tab:results_budgets} resume os resultados dos três orçamentos testados, possibilitando avaliar a robustez de cada estratégia.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Taxas de vitórias totais por estratégia e orçamento de tempo ($N = 400$ partidas por célula). Significância: *** $p < 0{,}001$, ** $p < 0{,}01$, * $p < 0{,}05$, n.s.\ não significativo.}
+    \label{tab:results_budgets}
+    \begin{tabular}{lrrr}
+        \hline
+        \textbf{Estratégia} & \textbf{30 s} & \textbf{60 s} & \textbf{120 s} \\
+        \hline
+        Crítica      & 51,0\% (n.s.) & \textbf{61,8\%} (***) & \textbf{63,2\%} (***) \\
+        Por Fase     & 44,5\% (*)    & 40,2\% (***)          & 42,5\% (**)           \\
+        Proporcional & 48,2\% (n.s.) & 52,2\% (n.s.)         & 50,5\% (n.s.)         \\
+        \hline
+    \end{tabular}
+\end{table}
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{images/results_winrates}
@@ -838,11 +855,13 @@ Os resultados dividem-se em três categorias distintas: a estratégia crítica s
 \subsection{Estratégia Crítica}
 \label{sec:results_critical}
 
-A estratégia crítica obteve 61,8\% de vitórias no total ($z = +4{,}70$, $p < 0{,}001$), resultado altamente significativo. O achado mais notável é a \textbf{simetria entre cores}: 61,5\% como Black e 62,0\% como White, uma diferença de apenas 0,5 pontos percentuais. Em Gomoku, White possui uma desvantagem estrutural que tipicamente resulta em taxas de vitória próximas a 40\% contra um oponente de força equivalente. O fato de a estratégia crítica obter 62\% como White — jogando contra a estratégia flat como Black — indica que a detecção de ameaças é capaz de reverter completamente essa desvantagem.
+A estratégia crítica obteve 61,8\% de vitórias no total ($z = +4{,}70$, $p < 0{,}001$), resultado altamente significativo. O achado mais notável é a \textbf{simetria entre cores}: 61,5\% como Black e 62,0\% como White, uma diferença de apenas 0,5 pontos percentuais. Em Gomoku, \citet{allis1994searching} provou que, com jogo ótimo, o primeiro jogador vence; contudo, no contexto deste experimento — com agentes MCTS de força equivalente — a partida de controle (flat vs.\ flat) resultou em 49,5\% de vitórias para Black e 50,5\% para White, confirmando que os agentes não jogam de forma ótima e que a vantagem teórica do primeiro movimento não é observável neste nível de jogo. O fato de a estratégia crítica obter 62\% como White — jogando contra a estratégia flat como Black — indica que a detecção de ameaças confere uma vantagem real, independente da cor.
 
-A análise da distribuição de tempo revela que a estratégia crítica gastou em média 0,878 s/lance, contra 0,796 s/lance do flat — uma diferença de aproximadamente 10\%. Esse acréscimo não é uniforme: ameaças táticas foram detectadas em \textbf{16,4\% dos lances} (aproximadamente 1 em cada 6), nos quais o tempo alocado dobrou para cerca de 1,6 s, enquanto os demais lances receberam $0{,}9\times$ da alocação flat. O sinal de detecção de ameaças é, portanto, esparso mas de alta precisão: identifica exatamente os lances em que um erro é imediatamente fatal e concentra recursos neles.
+A análise da distribuição de tempo revela que a estratégia crítica gastou em média 0,878 s/lance, contra 0,796 s/lance do flat — uma diferença de aproximadamente 10\%. Esse acréscimo não é uniforme: ameaças táticas foram detectadas em \textbf{20,4\% dos lances} (aproximadamente 1 em cada 5), nos quais o tempo alocado subiu para cerca de 1,4 s, enquanto os demais lances receberam $0{,}9\times$ da alocação flat. O sinal de detecção de ameaças é, portanto, esparso mas de alta precisão: identifica exatamente os lances em que um erro é imediatamente fatal e concentra recursos neles.
 
-Esse resultado valida a hipótese central da estratégia crítica (Seção~\ref{sec:strategy_critical}): erros em posições com ameaça de 4-em-linha aberta têm custo irreparável, e investir tempo adicional nesses lances — ainda que em apenas 16\% dos casos — eleva significativamente a taxa de vitórias.
+Esse resultado valida a hipótese central da estratégia crítica (Seção~\ref{sec:strategy_critical}): erros em posições com ameaça de 4-em-linha aberta têm custo irreparável, e investir tempo adicional nesses lances — ainda que em apenas 20\% dos casos — eleva significativamente a taxa de vitórias.
+
+\textbf{Robustez ao orçamento de tempo.} Os experimentos com 30, 60 e 120 segundos revelam um padrão de escalonamento positivo. Com 30 s, a estratégia crítica obtém 51,0\% ($z = +0{,}4$, n.s.): o ganho não é estatisticamente detectável com esse orçamento. Com 60 s, o ganho sobe para 61,8\% ($z = +4{,}70$, $p < 0{,}001$), e com 120 s atinge 63,2\% ($z = +5{,}30$, $p < 0{,}001$). Esse gradiente sugere que a estratégia crítica beneficia-se de orçamentos maiores: com mais tempo total disponível, o dobramento aplicado nos lances críticos representa um montante absoluto mais expressivo, permitindo ao MCTS explorar com maior profundidade justamente as posições forçadas. Com 30 s, o orçamento por lance é suficientemente pequeno para que mesmo o dobramento não garanta busca aprofundada suficiente; com 60 e 120 s, a concentração de recursos nos gargalos táticos se converte em ganho mensurável e crescente.
 
 \subsection{Estratégia por Fase}
 \label{sec:results_phase}
@@ -877,6 +896,8 @@ Há, porém, uma limitação mais profunda que vai além dos parâmetros escolhi
 
 Em outras palavras, a estratégia por fase investe mais tempo nos lances do meio do jogo \emph{em média}, mas sem discriminar quais lances do meio do jogo são genuinamente críticos. Ao redistribuir tempo de forma agregada por fase, ela inevitavelmente alocará mais tempo a lances de baixa urgência (e.g., jogadas posicionais de médio prazo) e, ao mesmo tempo, não garantirá recursos suficientes para lances críticos que ocorrem fora da janela de fase privilegiada. O contraste com a estratégia crítica é revelador: ao reagir ao estado local do tabuleiro em vez de à fase global, a estratégia crítica consegue concentrar o orçamento exatamente nos lances em que ele tem maior retorno esperado.
 
+\textbf{Robustez ao orçamento de tempo.} Nos três orçamentos testados, a estratégia por fase é consistentemente inferior ao \emph{baseline}: 44,5\% com 30 s ($z = -2{,}2$, $p < 0{,}05$), 40,2\% com 60 s ($z = -3{,}9$, $p < 0{,}001$) e 42,5\% com 120 s ($z = -3{,}0$, $p < 0{,}01$). O efeito adverso é persistente e independente do orçamento, o que indica que o problema reside no design da estratégia — especificamente na miscalibração do desconto de final — e não num artefato específico ao orçamento de 60 segundos. Vale notar que com 120 s a penalização de White atenua-se ligeiramente (43,5\% vs.\ 36,0\% a 60 s), possivelmente porque o desconto por esgotamento antecipado de orçamento é menos severo quando o orçamento total é maior, mas o efeito ainda permanece significativamente negativo.
+
 \subsection{Estratégia Proporcional}
 \label{sec:results_proportional}
 
@@ -885,6 +906,8 @@ A estratégia proporcional obteve 52,2\% de vitórias no total ($z = +0{,}90$, $
 Essa subalocação ocorre porque a maioria dos lances se concentra nas fases iniciais da partida, quando o preenchimento do tabuleiro $\rho$ ainda é baixo. Com $\rho$ tipicamente entre 0\% e 30\% durante a maior parte da partida, o multiplicador $\mu = 0{,}8 + 0{,}4\rho$ oscila entre 0,80 e 0,92 — sistematicamente abaixo de 1,0. O acréscimo esperado nos lances finais ($\mu \to 1{,}2$) é parcialmente compensado pela redução do orçamento residual nesses lances.
 
 A redistribuição de tempo é, portanto, mais tênue na prática do que na intenção de projeto, e seus efeitos não são detectáveis com 400 partidas. O resultado é neutro: a estratégia proporcional não prejudica nem beneficia o desempenho em relação ao flat.
+
+\textbf{Robustez ao orçamento de tempo.} O comportamento neutro mantém-se nos três orçamentos: 48,2\% com 30 s ($z = -0{,}7$, n.s.), 52,2\% com 60 s ($z = +0{,}9$, n.s.) e 50,5\% com 120 s ($z = +0{,}2$, n.s.). A ausência de efeito é consistente e independente do recurso computacional, reforçando que a estratégia proporcional, em sua forma atual, é equivalente ao \emph{baseline} flat em qualquer orçamento testado.
 
 % ---
 \section{Discussão}
@@ -895,7 +918,7 @@ A redistribuição de tempo é, portanto, mais tênue na prática do que na inte
 
 Os três resultados formam um padrão coerente à luz das hipóteses do Capítulo~\ref{chap:proposal}. A estratégia com sinal de maior especificidade — a crítica, que detecta padrões posicionais concretos — é a única que produz ganho mensurável. A estratégia com sinal de especificidade intermediária — a por fase, que classifica o estado em regiões ordinais de importância — produz redistribuição de tempo mas com efeito adverso por conta da miscalibração do desconto de final. A estratégia com sinal mais fraco — a proporcional, com contagem agregada de peças — é neutra.
 
-Esse gradiente sugere que, neste domínio e com este orçamento de tempo, \textbf{a qualidade do sinal de alocação importa mais do que o volume total de tempo redistribuído}. A estratégia crítica usa um sinal binário aplicado a apenas 16\% dos lances — mecanismo simples, mas altamente informativo. A estratégia por fase distribui o orçamento de forma mais contínua mas com menor acurácia na identificação dos lances decisivos.
+Esse gradiente sugere que, neste domínio e com este orçamento de tempo, \textbf{a qualidade do sinal de alocação importa mais do que o volume total de tempo redistribuído}. A estratégia crítica usa um sinal binário aplicado a aproximadamente 20\% dos lances — mecanismo simples, mas altamente informativo. A estratégia por fase distribui o orçamento de forma mais contínua mas com menor acurácia na identificação dos lances decisivos.
 
 \subsection{Por que a estratégia crítica funciona}
 \label{sec:discussion_critical}
@@ -906,17 +929,17 @@ O desempenho da estratégia crítica pode ser interpretado à luz de três conce
 
 \textbf{Valor da informação e precisão do sinal.} Na perspectiva da teoria da decisão, o valor de investir tempo adicional em um lance é proporcional à probabilidade de que esse tempo altere a decisão tomada e ao impacto dessa mudança no resultado final. Em posições não críticas, o MCTS com orçamento flat já identifica o movimento correto com alta confiança — iterações adicionais têm baixo valor de informação. Em posições com ameaça de 4-em-linha, a probabilidade de erro sem tempo suficiente é não negligenciável, e o custo de um erro é máximo (derrota imediata). O sinal binário da estratégia crítica captura exatamente essa assimetria: ele não tenta estimar o valor de cada lance, apenas identifica quando o valor da informação adicional é excepcionalmente alto.
 
-\textbf{Precisão versus cobertura do sinal.} A eficácia do sinal depende não apenas de detectar posições críticas, mas de não ativar o multiplicador em posições de baixa urgência. Um sinal de baixa precisão diluiria o orçamento extra e aproximaria a estratégia do comportamento da estratégia por fase. O 4-em-linha aberto é um sinal de alta precisão: cada ativação corresponde a uma posição genuinamente forçada. Isso explica por que uma taxa de ativação de apenas 16,4\% é suficiente para produzir ganho de 11,8 pontos percentuais — cada unidade de orçamento extra é investida exatamente onde tem maior retorno esperado.
+\textbf{Precisão versus cobertura do sinal.} A eficácia do sinal depende não apenas de detectar posições críticas, mas de não ativar o multiplicador em posições de baixa urgência. Um sinal de baixa precisão diluiria o orçamento extra e aproximaria a estratégia do comportamento da estratégia por fase. O 4-em-linha aberto é um sinal de alta precisão: cada ativação corresponde a uma posição genuinamente forçada. Isso explica por que uma taxa de ativação de apenas 20,4\% é suficiente para produzir ganho de 11,8 pontos percentuais — cada unidade de orçamento extra é investida exatamente onde tem maior retorno esperado.
 
 \subsection{O efeito da cor na estratégia crítica}
 \label{sec:discussion_color}
 
-A simetria observada na estratégia crítica — 61,5\% como Black e 62,0\% como White — merece atenção específica. Ao anular a desvantagem estrutural de White, a estratégia crítica demonstra que a vantagem do primeiro movimento em Gomoku pode ser contrabalançada por uma política de alocação de tempo mais precisa. White, que tipicamente precisa reagir à iniciativa de Black, se beneficia proporcionalmente da detecção de ameaças: bloquear uma sequência de 4-em-linha no tempo correto é, para White, frequentemente a única forma de não perder no lance seguinte.
+A simetria observada na estratégia crítica — 61,5\% como Black e 62,0\% como White — merece atenção específica. A partida de controle (flat vs.\ flat a 60 s) produziu 49,5\% para Black e 50,5\% para White, mostrando que, neste nível de jogo, os agentes MCTS de força equivalente não exibem a vantagem estrutural do primeiro movimento prevista pela análise de jogo ótimo \cite{allis1994searching}. Nesse contexto, a obtenção de 62\% como White pela estratégia crítica não representa reversão de uma desvantagem preexistente, mas sim uma vantagem real criada pela política de alocação: White, que tipicamente precisa reagir à iniciativa de Black, se beneficia da detecção de ameaças porque bloquear uma sequência de 4-em-linha no tempo correto é, frequentemente, a única forma de não perder no lance seguinte.
 
 \subsection{Limitações}
 \label{sec:discussion_limitations}
 
-Os experimentos apresentam algumas limitações que devem ser consideradas na interpretação dos resultados. Primeiro, o único \emph{baseline} utilizado foi a estratégia flat; comparações diretas entre as estratégias propostas não foram realizadas, o que impede afirmações sobre ordenação relativa entre elas. Segundo, todos os experimentos utilizaram um único orçamento de 60 segundos por jogador; resultados podem diferir com orçamentos distintos, particularmente para a estratégia crítica, cujo ganho depende da frequência de ameaças detectadas. Terceiro, ambos os agentes utilizam o mesmo motor MCTS; contra agentes com capacidades de busca diferentes, os efeitos das estratégias de tempo podem variar. Por fim, os resultados são específicos ao Gomoku; domínios com estrutura tática distinta podem apresentar padrões diferentes de resposta às estratégias de alocação. Uma direção natural de trabalho futuro é estender o sistema a outros jogos de tabuleiro — como Go ou Hex — e a outros agentes de busca, explorando se o ganho da estratégia crítica se generaliza para domínios com padrões táticos diferentes, e se a arquitetura extensível proposta facilita essa comparação.
+Os experimentos apresentam algumas limitações que devem ser consideradas na interpretação dos resultados. Primeiro, o único \emph{baseline} utilizado foi a estratégia flat; comparações diretas entre as estratégias propostas não foram realizadas, o que impede afirmações sobre ordenação relativa entre elas. Segundo, embora os experimentos cubram três orçamentos distintos (30, 60 e 120 segundos), a estratégia crítica só apresenta ganho mensurável a partir de 60 s; o limiar mínimo de orçamento para que o mecanismo de detecção de ameaças produza efeito positivo não foi investigado sistematicamente. Terceiro, ambos os agentes utilizam o mesmo motor MCTS; contra agentes com capacidades de busca diferentes, os efeitos das estratégias de tempo podem variar. Por fim, os resultados são específicos ao Gomoku; domínios com estrutura tática distinta podem apresentar padrões diferentes de resposta às estratégias de alocação. Uma direção natural de trabalho futuro é estender o sistema a outros jogos de tabuleiro — como Go ou Hex — e a outros agentes de busca, explorando se o ganho da estratégia crítica se generaliza para domínios com padrões táticos diferentes, e se a arquitetura extensível proposta facilita essa comparação.
 
 % -----------------------------------------------------------------------
 % CAPÍTULO 6 — Conclusão
@@ -925,11 +948,11 @@ Os experimentos apresentam algumas limitações que devem ser consideradas na in
 
 O MCTS é, por natureza, um algoritmo \emph{anytime}: dado mais tempo, produz decisões de maior qualidade. Em contextos competitivos com orçamento fixo por partida, porém, esse recurso é finito e deve ser distribuído entre todos os lances. A questão investigada neste trabalho é se — e como — a qualidade dessa distribuição influencia a taxa de vitórias: alocar tempo de forma desigual, concentrando-o nos momentos mais importantes da partida, traz ganho mensurável em relação à alocação uniforme?
 
-Para responder a essa questão, foram propostas e implementadas quatro estratégias de alocação de tempo sobre um agente MCTS aplicado ao Gomoku: a uniforme (\emph{flat}), que serve como \emph{baseline}; a proporcional, que escala a alocação com o preenchimento do tabuleiro; a por fase, que aplica multiplicadores distintos conforme a fase do jogo; e a crítica, que detecta ameaças táticas imediatas e dobra o tempo alocado nesses lances. As estratégias foram comparadas em um torneio controlado de 400 partidas por estratégia contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
+Para responder a essa questão, foram propostas e implementadas quatro estratégias de alocação de tempo sobre um agente MCTS aplicado ao Gomoku: a uniforme (\emph{flat}), que serve como \emph{baseline}; a proporcional, que escala a alocação com o preenchimento do tabuleiro; a por fase, que aplica multiplicadores distintos conforme a fase do jogo; e a crítica, que detecta ameaças táticas imediatas e dobra o tempo alocado nesses lances. As estratégias foram comparadas em torneios controlados de 400 partidas por estratégia contra o \emph{baseline} flat em três orçamentos distintos — 30, 60 e 120 segundos por jogador — com alternância de cores para controlar o viés do primeiro movimento, totalizando 3600 partidas.
 
-Os resultados dividem-se em três padrões distintos. A estratégia crítica obteve 61,8\% de vitórias ($z = +4{,}70$, $p < 0{,}001$), resultado consistente entre as duas cores (61,5\% como Black, 62,0\% como White). Notavelmente, o mecanismo de detecção de ameaças foi ativado em apenas 16,4\% dos lances — o suficiente para reverter completamente a desvantagem estrutural do jogador branco. A estratégia por fase obteve 40,2\% de vitórias ($z = -3{,}90$, $p < 0{,}001$), sendo significativamente inferior ao baseline: o multiplicador elevado no meio do jogo esgota o orçamento antes dos lances decisivos do final, penalizando especialmente o jogador branco (36,0\%). A estratégia proporcional, com 52,2\% ($p = 0{,}37$), é estatisticamente indistinguível do flat — a redistribuição real é mais tênue do que o projeto sugere, pois o multiplicador permanece abaixo de 1,0 na maior parte da partida.
+Os resultados dividem-se em três padrões distintos, consistentes nos três orçamentos avaliados. A estratégia crítica obteve 61,8\% de vitórias a 60 s ($z = +4{,}70$, $p < 0{,}001$) e 63,2\% a 120 s ($z = +5{,}30$, $p < 0{,}001$), com resultado consistente entre as duas cores em ambos os orçamentos; com 30 s o ganho não foi estatisticamente detectável (51,0\%, n.s.), indicando que a estratégia se beneficia de orçamentos maiores. Notavelmente, o mecanismo de detecção de ameaças foi ativado em apenas 20,4\% dos lances — aproximadamente 1 em cada 5 — conferindo vantagem real à estratégia independentemente da cor jogada. A estratégia por fase obteve taxas abaixo de 50\% em todos os orçamentos (44,5\% a 30 s; 40,2\% a 60 s; 42,5\% a 120 s), sendo consistentemente inferior ao \emph{baseline}: o multiplicador elevado no meio do jogo esgota o orçamento antes dos lances decisivos do final, penalizando especialmente o jogador branco. A estratégia proporcional é estatisticamente indistinguível do flat nos três orçamentos (48,2\%, 52,2\% e 50,5\%), confirmando que a redistribuição real é mais tênue do que o projeto sugere.
 
-O achado central que atravessa os três resultados é que \textbf{a qualidade do sinal de alocação importa mais do que o volume de tempo redistribuído}. A estratégia crítica redistribui tempo em apenas 16\% dos lances com um sinal binário simples, mas de alta precisão; a por fase redistribui ao longo de toda a partida com um sinal mais elaborado, porém menos acurado. A hipótese do trabalho — de que alocação inteligente supera o baseline flat — é confirmada parcialmente: vale quando o sinal é específico o suficiente (crítica), mas não quando é agregado (proporcional) ou mal calibrado (por fase).
+O achado central que atravessa os três resultados é que \textbf{a qualidade do sinal de alocação importa mais do que o volume de tempo redistribuído}. A estratégia crítica redistribui tempo em apenas 20\% dos lances com um sinal binário simples, mas de alta precisão; a por fase redistribui ao longo de toda a partida com um sinal mais elaborado, porém menos acurado. A hipótese do trabalho — de que alocação inteligente supera o baseline flat — é confirmada parcialmente: vale quando o sinal é específico o suficiente (crítica), mas não quando é agregado (proporcional) ou mal calibrado (por fase).
 
 A partir desses resultados, identificam-se quatro direções naturais de trabalho futuro. A primeira é refinar a estratégia por fase: reduzir o desconto de final ou substituir o limiar fixo de preenchimento pelo número estimado de lances restantes, desacoplando a classificação de fase do ritmo real de cada partida. A segunda é estender a estratégia crítica para detectar padrões táticos além do 4-em-linha aberto — como o duplo-três e ameaças compostas — ampliando sua cobertura sem comprometer a precisão do sinal. A terceira é explorar a arquitetura extensível do sistema para testar as estratégias em outros domínios de jogo (Go, Hex) e com outros agentes de busca, investigando se o ganho observado no Gomoku se generaliza para domínios com estrutura tática distinta. Por fim, a direção mais ambiciosa é substituir os sinais posicionais por informação interna da árvore MCTS — como a variância nas estimativas de valor dos filhos da raiz, abordagem proposta por \citet{huang2010time} — ou aprender a política de alocação ótima por reforço a partir de dados de partidas, avançando em direção a estratégias adaptativas que este trabalho deixa em aberto.
 
