@@ -1,0 +1,12 @@
+% Minimal tocstyle stub — tocstyle was removed from KOMA-Script >= 3.35.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tocstyle}[2024/01/01 stub]
+\DeclareOption{tocindentauto}{}
+\DeclareOption{tocfullflat}{}
+\ProcessOptions\relax
+% \settocstylefeature{key}{value}
+\newcommand{\settocstylefeature}[2]{}
+% \settocfeature[toc][level]{key}{value}  — gobble all args
+\newcommand{\settocfeature}[1][]{\@stf@optB}
+\newcommand{\@stf@optB}[1][]{\@stf@body}
+\newcommand{\@stf@body}[2]{}

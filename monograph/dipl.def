@@ -1,0 +1,6 @@
+%
+% dipl.def — Trabalho de Conclusão (tc) for iiufrgs
+%
+\ProvidesFile{dipl.def}[2014/04/12 Trabalho de Conclusão de Curso]
+\newcommand{\titlepagespecificinfo}{\tcspecificinfo}
+\def\@cipspecificinfo{\tcname}
