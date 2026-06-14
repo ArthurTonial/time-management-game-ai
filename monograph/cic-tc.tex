@@ -92,7 +92,7 @@ Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 
 % resumo na língua do documento
 \begin{abstract}
-O Monte Carlo Tree Search (MCTS) é um algoritmo \emph{anytime} para jogos: dado mais tempo por turno, produz decisões de maior qualidade. Em partidas competitivas com orçamento de tempo fixo por jogador, surge o problema de como distribuir esse orçamento entre os lances da partida. A estratégia mais comum — dividir o tempo restante igualmente — ignora que posições com ameaças táticas imediatas são muito mais críticas do que lances de abertura, onde o espaço de busca é vasto e as consequências são difusas.
+O Monte Carlo Tree Search (MCTS) é um algoritmo \emph{anytime} para jogos: dado mais tempo por turno, tende a produzir decisões de maior qualidade. Em partidas competitivas com orçamento de tempo fixo por jogador, surge o problema de como distribuir esse orçamento entre os lances da partida. A estratégia mais comum — dividir o tempo restante igualmente — ignora que posições com ameaças táticas imediatas são muito mais críticas do que lances de abertura, onde o espaço de busca é vasto e as consequências são difusas.
 
 Este trabalho propõe e compara quatro estratégias de alocação de tempo por lance aplicadas a um agente MCTS no Gomoku 15×15: (i) uniforme (\emph{flat}), utilizada como \emph{baseline}; (ii) proporcional, que escala a alocação com o preenchimento do tabuleiro; (iii) por fase, que aplica multiplicadores distintos na abertura, meio do jogo e final; e (iv) crítica, que detecta ameaças de 4-em-linha aberta e dobra o tempo alocado nesses lances. Cada estratégia foi avaliada em torneios de 400 partidas contra o \emph{baseline} flat, com orçamento de 60 segundos por jogador e alternância de cores para controlar o viés do primeiro movimento.
 
@@ -103,7 +103,7 @@ O achado central é que a qualidade do sinal de alocação importa mais do que o
 
 % resumo na outra língua
 \begin{englishabstract}{Time Management Strategies per Move for MCTS Agents in Gomoku}{Monte Carlo Tree Search. time management. Gomoku. board games. artificial intelligence}
-Monte Carlo Tree Search (MCTS) is an anytime algorithm for games: given more time per turn, it produces higher-quality decisions. In competitive settings with a fixed time budget per player, the problem of how to distribute this budget across the moves of a game arises. The most common strategy — dividing the remaining time equally among estimated remaining moves — ignores that positions with immediate tactical threats are far more critical than opening moves, where the search space is vast and consequences are diffuse.
+Monte Carlo Tree Search (MCTS) is an anytime algorithm for games: given more time per turn, it tends to produce higher-quality decisions. In competitive settings with a fixed time budget per player, the problem of how to distribute this budget across the moves of a game arises. The most common strategy — dividing the remaining time equally among estimated remaining moves — ignores that positions with immediate tactical threats are far more critical than opening moves, where the search space is vast and consequences are diffuse.
 
 This work proposes and compares four per-move time allocation strategies applied to an MCTS agent in 15×15 Gomoku: (i) uniform (flat), used as baseline; (ii) proportional, scaling allocation with board fill ratio; (iii) phase-based, applying distinct multipliers for the opening, midgame, and endgame; and (iv) critical, detecting open four-in-a-row threats and doubling the time allocated to those moves. Each strategy was evaluated in tournaments of 400 games against the flat baseline, with a budget of 60 seconds per player and color alternation to control the first-move advantage.
 
@@ -316,7 +316,7 @@ Essa propriedade contrasta diretamente com o Minimax com profundidade fixa, que 
 \section{Gerenciamento de Tempo em Jogos}
 \label{sec:timemanagement}
 
-O gerenciamento de tempo é o problema de decidir, a cada turno, quanto do orçamento disponível investir na busca pelo melhor movimento. Para agentes automáticos baseados em MCTS, essa decisão é especialmente relevante: como o algoritmo é \emph{anytime}, a qualidade da resposta cresce com o tempo, mas o orçamento total por partida é finito e deve ser distribuído entre todos os lances. Esta seção apresenta o contexto histórico do controle de tempo em competições, os tipos de estratégias de alocação identificados na literatura e o estado da arte para agentes MCTS.
+O gerenciamento de tempo é o problema de decidir, a cada turno, quanto do orçamento disponível investir na busca pelo melhor movimento. Para agentes automáticos baseados em MCTS, essa decisão é especialmente relevante: como o algoritmo é \emph{anytime}, a qualidade da resposta tende a crescer com o tempo, mas o orçamento total por partida é finito e deve ser distribuído entre todos os lances. Esta seção apresenta o contexto histórico do controle de tempo em competições, os tipos de estratégias de alocação identificados na literatura e o estado da arte para agentes MCTS.
 
 \subsection{Controle de tempo em competições}
 \label{sec:timecontrol_history}
@@ -398,7 +398,7 @@ O ponto de partida é a propriedade \emph{anytime} do MCTS (Seção~\ref{sec:mct
 
 Essa característica tem uma consequência direta para o problema de alocação: redistribuir tempo de posições de baixo retorno marginal para posições de alto retorno marginal pode aumentar a qualidade agregada das decisões sem alterar o orçamento total. Formalmente, se $Q(t)$ denota a qualidade esperada de uma decisão com $t$ segundos de busca, e se assumirmos que $Q$ é côncava (retornos decrescentes), então para dois lances $i$ e $j$ com importâncias distintas $v_i > v_j$, alocar mais tempo ao lance $i$ e menos ao $j$ pode aumentar $v_i \cdot Q(t_i) + v_j \cdot Q(t_j)$ em relação à alocação uniforme — desde que a diferença de importância seja suficientemente grande para compensar a concavidade de $Q$.
 
-O argumento acima é a motivação central deste trabalho: se algumas posições do Gomoku têm $v_i \gg v_j$ — isto é, errar nelas é muito mais custoso do que errar em outras —, então uma política de alocação que identifique e priorize essas posições pode superar a alocação uniforme em taxa de vitórias. As estratégias propostas na Seção~\ref{sec:strategies} operacionalizam diferentes critérios para estimar essa importância relativa.
+As estratégias propostas na Seção~\ref{sec:strategies} operacionalizam diferentes critérios para estimar a importância relativa de cada lance.
 
 \subsection{Formulação do problema}
 \label{sec:problem_formal}
@@ -444,7 +444,7 @@ Uma distinção fundamental entre as políticas propostas é o conjunto de infor
 
 \textbf{Políticas sensíveis ao tabuleiro} (\emph{closed-loop}): examinam o estado atual do tabuleiro para calibrar a alocação. A estratégia proporcional lê a contagem agregada de células vazias para computar a fração de preenchimento; a estratégia por fase classifica essa fração em regiões de importância distinta; a estratégia crítica inspeciona padrões táticos específicos. Essas políticas têm potencialmente maior poder de discriminação — alocam mais tempo precisamente quando o tabuleiro indica que o lance é importante —, mas introduzem um custo de análise do estado que deve ser negligenciável em relação a $t_i$ para não distorcer o experimento.
 
-Essa taxonomia tem uma implicação experimental relevante. Qualquer diferença de desempenho entre a política \emph{open-loop} (flat) e as políticas \emph{closed-loop} pode ser atribuída, ao menos em parte, ao uso da informação do tabuleiro como sinal de alocação. Entre as estratégias \emph{closed-loop}, o grau de sofisticação da informação extraída cresce da proporcional (contagem agregada) para a por fase (classificação ordinal) e a crítica (detecção de padrões posicionais específicos).
+Entre as estratégias \emph{closed-loop}, o grau de sofisticação da informação extraída cresce da proporcional (contagem agregada) para a por fase (classificação ordinal) e a crítica (detecção de padrões posicionais específicos).
 
 \subsection{Requisitos da interface de alocação}
 \label{sec:interface_requirements}
@@ -950,7 +950,7 @@ Uma limitação de design merece destaque adicional. O experimento não separa d
 % -----------------------------------------------------------------------
 \chapter{Conclusão}
 
-O MCTS é, por natureza, um algoritmo \emph{anytime}: dado mais tempo, produz decisões de maior qualidade. Em contextos competitivos com orçamento fixo por partida, porém, esse recurso é finito e deve ser distribuído entre todos os lances. A questão investigada neste trabalho é se — e como — a qualidade dessa distribuição influencia a taxa de vitórias: alocar tempo de forma desigual, concentrando-o nos momentos mais importantes da partida, traz ganho mensurável em relação à alocação uniforme?
+O MCTS é, por natureza, um algoritmo \emph{anytime}: dado mais tempo, tende a produzir decisões de maior qualidade. Em contextos competitivos com orçamento fixo por partida, porém, esse recurso é finito e deve ser distribuído entre todos os lances. A questão investigada neste trabalho é se — e como — a qualidade dessa distribuição influencia a taxa de vitórias: alocar tempo de forma desigual, concentrando-o nos momentos mais importantes da partida, traz ganho mensurável em relação à alocação uniforme?
 
 Para responder a essa questão, foram propostas e implementadas quatro estratégias de alocação de tempo sobre um agente MCTS aplicado ao Gomoku: a uniforme (\emph{flat}), que serve como \emph{baseline}; a proporcional, que escala a alocação com o preenchimento do tabuleiro; a por fase, que aplica multiplicadores distintos conforme a fase do jogo; e a crítica, que detecta ameaças táticas imediatas e dobra o tempo alocado nesses lances. As estratégias foram comparadas em torneios controlados de 400 partidas por estratégia contra o \emph{baseline} flat em três orçamentos distintos — 30, 60 e 120 segundos por jogador — com alternância de cores para controlar o viés do primeiro movimento, totalizando 3600 partidas.
 
