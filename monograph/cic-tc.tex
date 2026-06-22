@@ -76,9 +76,7 @@
 
 % agradecimentos
 \chapter*{Agradecimentos}
-Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
-
-
+Gostaria de dedicar meus primeiros agradecimentos aos meus pais, Elton e Márcia, por serem minha base. Muito obrigado pelo incentivo constante e por sempre me apoiarem a estudar, aprender e evoluir em todos os aspectos da vida. À minha irmã, Luiza, que sempre foi um grande exemplo a ser seguido. À minha namorada, Isabella, por ser a melhor companheira que eu poderia ter durante toda essa jornada. Obrigado por dividir o peso do cansaço nos dias mais difíceis e por celebrar comigo cada pequena vitória. Agradeço também aos meus amigos, que foram um respiro essencial fora do ambiente acadêmico, trazendo leveza e alegria a essa trajetória. Por fim, deixo meu sincero agradecimento à Universidade Federal do Rio Grande do Sul, aos professores do Instituto de Informática (INF) e ao meu orientador, Renato Ribas. Obrigado por viabilizarem uma formação de excelência e por me moldarem não apenas como cientista da computação, mas como ser humano.
 
 % resumo na língua do documento
 \begin{abstract}
@@ -111,11 +109,12 @@ The central finding is that the quality of the allocation signal matters more th
 % lista de abreviaturas e siglas
 \begin{listofabbrv}{MCTS}
     \item[IA]   Inteligência Artificial
-    \item[MCTS] Monte Carlo Tree Search
-    \item[UCB]  Upper Confidence Bound
-    \item[UCB1] Upper Confidence Bound 1
-    \item[UCT]  Upper Confidence Bound for Trees
-    \item[GGP]  General Game Playing
+    \item[LLM]  \emph{Large Language Model} (Modelo de Linguagem de Grande Escala)
+    \item[MCTS] \emph{Monte Carlo Tree Search}
+    \item[UCB]  \emph{Upper Confidence Bound}
+    \item[UCB1] \emph{Upper Confidence Bound 1}
+    \item[UCT]  \emph{Upper Confidence Bound for Trees}
+    \item[GGP]  \emph{General Game Playing}
 \end{listofabbrv}
 
 % idem para a lista de símbolos
@@ -974,5 +973,20 @@ A partir desses resultados, identificam-se quatro direções naturais de trabalh
 
 \bibliographystyle{abntex2-alf}
 \bibliography{biblio}
+
+% -----------------------------------------------------------------------
+% CAPÍTULO EXTRA - Uso de IA
+% -----------------------------------------------------------------------
+
+\chapter*{Nota sobre uso de ferramentas de IA}
+\addcontentsline{toc}{chapter}{Nota sobre uso de ferramentas de IA}
+
+Em conformidade com as diretrizes contemporâneas de transparência acadêmica e científica, esta nota tem como objetivo documentar o uso de ferramentas de Inteligência Artificial (IA) generativa, especificamente modelos de linguagem de grande escala (LLMs), durante o desenvolvimento deste Trabalho de Conclusão de Curso. As ferramentas foram utilizadas com propósitos específicos e restritos, atuando como assistentes para otimizar o fluxo de trabalho.
+
+\textbf{No texto:} A IA foi utilizada como ferramenta de suporte à redação e formatação. O uso incluiu revisão gramatical e ortográfica, refinamento estilístico de parágrafos para aprimorar a fluidez acadêmica, auxílio na formatação em \LaTeX\ e, em algumas etapas, suporte na verificação de consistência entre afirmações e resultados experimentais. Todo conteúdo produzido com auxílio da ferramenta foi avaliado, modificado quando necessário e aprovado pelo autor antes de ser incorporado ao documento.
+
+\textbf{No código:} Durante a etapa de implementação da infraestrutura do projeto — que engloba o motor do jogo Gomoku, o agente MCTS e o \emph{runner} de torneios —, assistentes de IA foram pontualmente empregados. O uso se deu no auxílio à depuração de erros (\emph{debugging}), na refatoração de blocos lógicos específicos e em consultas rápidas sobre sintaxe de bibliotecas. A ferramenta atuou como um recurso de consulta interativa, acelerando a resolução de gargalos técnicos isolados de programação.
+
+Ressalta-se, de forma categórica, que toda a concepção arquitetural da solução, o design das quatro estratégias de gerenciamento de tempo, a formulação das hipóteses, a configuração metodológica dos experimentos e a análise crítica dos resultados são de autoria intelectual exclusiva do autor e de seu orientador. Todo e qualquer conteúdo, seja em texto ou em código, sugerido pelas ferramentas de IA foi rigorosamente lido, testado, validado e modificado antes de ser incorporado à versão final desta monografia.
 
 \end{document}
